@@ -1,4 +1,4 @@
-package com.segway.loomo;
+package com.segway.loomo.objects;
 
 public class Spot {
     private float x_coordinate;
