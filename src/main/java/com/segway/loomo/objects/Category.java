@@ -1,4 +1,4 @@
 package com.segway.loomo.objects;
 
-public class Category {
+public class Category extends AppObject {
 }

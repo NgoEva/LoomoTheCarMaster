@@ -1,4 +1,5 @@
 package com.segway.loomo.objects;
 
-public class Car {
+public class Car extends AppObject{
+
 }

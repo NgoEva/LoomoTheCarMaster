@@ -1,6 +1,6 @@
 package com.segway.loomo.objects;
 
-public class Spot {
+public class Spot extends AppObject {
     private float x_coordinate;
     private float y_coordinate;
 

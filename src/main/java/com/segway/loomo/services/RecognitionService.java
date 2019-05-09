@@ -16,7 +16,7 @@ import com.segway.robot.sdk.voice.recognition.WakeupResult;
 
 import java.util.Arrays;
 
-public class RecognitionService {
+public class RecognitionService implements Service {
     private static final String TAG = "RecognitionService";
     private final Context context;
 
@@ -59,19 +59,15 @@ public class RecognitionService {
         init();
     }
 
-    private void init() {
+    public void init() {
         this.recognizer = Recognizer.getInstance();
         initListeners();
         this.recognizer.bindService(this.context, new ServiceBinder.BindStateListener() {
             @Override
             public void onBind() {
                 Log.d(TAG, "recognizer service bound successfully");
-                try {
-                    initControlGrammer();
-                    RecognitionService.getInstance().startListening();
-                } catch (VoiceException e) {
-                    Log.e(TAG, "Exception: ", e);
-                }
+                initControlGrammer();
+                RecognitionService.getInstance().startListening();
             }
 
             @Override
@@ -81,7 +77,7 @@ public class RecognitionService {
         });
     }
 
-    private void initListeners(){
+    public void initListeners(){
         wakeupListener = new WakeupListener() {
             @Override
             public void onStandby() {
