@@ -1,4 +1,4 @@
 package com.segway.loomo.services;
 
-public class SpeakerService {
+public class SpeakService {
 }
