@@ -1,13 +1,17 @@
 package com.segway.loomo.services;
 
-interface Service {
+import android.util.Log;
 
-    void init();
+public abstract class Service {
+    public void init() {};
 
-    void initListeners();
+    public void initListeners() {};
 
-    void restartService();
+    public void restartService() {
+        Log.d(null, "restart service");
+        this.init();
+    };
 
-    void disconnect();
+    public void disconnect() {};
 
 }

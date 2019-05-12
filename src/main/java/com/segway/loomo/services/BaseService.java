@@ -1,6 +1,6 @@
 package com.segway.loomo.services;
 
-public class BaseService implements Service {
+public class BaseService extends Service {
 
     @Override
     public void init() {

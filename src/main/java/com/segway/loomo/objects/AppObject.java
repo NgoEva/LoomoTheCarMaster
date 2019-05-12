@@ -2,16 +2,17 @@ package com.segway.loomo.objects;
 
 public abstract class AppObject {
 
-    private int id = 0;
+    private String id = "";
 
     public AppObject() {
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+
+    public void setId(String id) {
         this.id = id;
     }
 }

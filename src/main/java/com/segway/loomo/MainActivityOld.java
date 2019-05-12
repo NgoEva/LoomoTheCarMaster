@@ -45,9 +45,9 @@ public class MainActivityOld extends Activity implements View.OnClickListener {
 
     private Button mStart;
 
-    private Spot spot1 = new Spot(-1.0f, 1.0f);
-    private Spot spot2 = new Spot(0f, 1.0f);
-    private Spot spot3 = new Spot(1.0f, 1.0f);
+    private Spot spot1 = new Spot(1.0f, 1.0f);
+    private Spot spot2 = new Spot(1.0f, 0.0f);
+    private Spot spot3 = new Spot(1.0f, -1.0f);
 
     private boolean interested = false;
     private boolean resetPosition = true;
