@@ -116,7 +116,7 @@ public class RequestHandler {
 
             car.setColor(carObject.getString("color"));
             car.setSeatNumber(carObject.getInt("seat_number"));
-            car.setpower(carObject.getInt("power"));
+            car.setPower(carObject.getInt("power"));
             car.setMaxSpeed(carObject.getInt("max_speed"));
             car.setTransmission(carObject.getString("transmission"));
             car.setFuelType(carObject.getString("fuel_type"));

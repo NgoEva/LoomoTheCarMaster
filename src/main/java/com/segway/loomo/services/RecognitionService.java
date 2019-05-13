@@ -3,7 +3,6 @@ package com.segway.loomo.services;
 import android.content.Context;
 import android.util.Log;
 
-import com.segway.loomo.services.SpeakService;
 import com.segway.loomo.objects.Spot;
 import com.segway.robot.sdk.base.bind.ServiceBinder;
 import com.segway.robot.sdk.voice.Recognizer;
@@ -136,41 +135,26 @@ public class RecognitionService extends Service {
                     if (resetPosition) BaseService.getInstance().resetPosition();
                     if (result.contains("car one") || result.contains("first car")) {
                         Log.d(TAG, "selected car: 1");
-                        try {
-                            selectedCar = 1;
-                            SpeakService.getInstance().speak("Alright. Follow me. I will guide you to car one.");
-                            BaseService.getInstance().startNavigation(spot1);
-                            resetPosition = false;
-                        }
-                        catch (VoiceException e){
-                            Log.e(TAG, "Exception: ", e);
-                        }
+                        selectedCar = 1;
+                        SpeakService.getInstance().speak("Alright. Follow me. I will guide you to car one.");
+                        BaseService.getInstance().startNavigation(spot1);
+                        resetPosition = false;
                         return true;
                     }
                     else if (result.contains("car two") || result.contains("second car")) {
                         Log.d(TAG, "selected car: 2");
-                        try {
-                            selectedCar = 2;
-                            SpeakService.getInstance().speak("Alright. Follow me. I will guide you to car two.");
-                            BaseService.getInstance().startNavigation(spot2);
-                            resetPosition = false;
-                        }
-                        catch (VoiceException e){
-                            Log.e(TAG, "Exception: ", e);
-                        }
+                        selectedCar = 2;
+                        SpeakService.getInstance().speak("Alright. Follow me. I will guide you to car two.");
+                        BaseService.getInstance().startNavigation(spot2);
+                        resetPosition = false;
                         return true;
                     }
                     else if (result.contains("car three") || result.contains("third car")) {
                         Log.d(TAG, "selected car: 3");
-                        try {
-                            selectedCar = 3;
-                            SpeakService.getInstance().speak("Alright. Follow me. I will guide you to car three.");
-                            BaseService.getInstance().startNavigation(spot3);
-                            resetPosition = false;
-                        }
-                        catch (VoiceException e){
-                            Log.e(TAG, "Exception: ", e);
-                        }
+                        selectedCar = 3;
+                        SpeakService.getInstance().speak("Alright. Follow me. I will guide you to car three.");
+                        BaseService.getInstance().startNavigation(spot3);
+                        resetPosition = false;
                         return true;
                     }
                     return true;

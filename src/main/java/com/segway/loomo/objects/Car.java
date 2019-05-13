@@ -82,7 +82,9 @@ public class Car extends AppObject{
         return maxFuelConsumption;
     }
 
-    public void setMaxFuelConsumption(float maxFuelConsumption){ this.maxFuelConsumption = maxFuelConsumption; }
+    public void setMaxFuelConsumption(double maxFuelConsumption){
+        float max = (float) maxFuelConsumption;
+        this.maxFuelConsumption = max; }
 
     public int getPrice(){
         return price;
