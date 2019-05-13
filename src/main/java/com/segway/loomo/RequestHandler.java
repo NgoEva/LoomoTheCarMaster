@@ -35,7 +35,7 @@ public class RequestHandler {
 
     private ArrayList<? extends AppObject> makeRequest(final String type) {
         String url = String.format(this.url, type);
-        ArrayList<? extends AppObject> responseObjects;
+        ArrayList<? extends AppObject> responseObjects = new ArrayList<>();
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         JSONObject response;
 
