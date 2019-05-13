@@ -56,7 +56,7 @@ public class MainActivity extends Activity {
     }
 
     private void initServices(){
-        this.loomoBaseService = new BaseService(getRequestQueue());
+        this.loomoBaseService = new BaseService(getApplicationContext());
         this.loomoRegocnitionService = new RecognitionService(getApplicationContext());
         this.loomoSpeakService = new SpeakService(getApplicationContext());
 
