@@ -8,11 +8,23 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.Volley;
+import com.segway.loomo.services.BaseService;
+import com.segway.loomo.services.RecognitionService;
+import com.segway.loomo.services.Service;
+import com.segway.loomo.services.SpeakService;
 
 public class MainActivity extends Activity {
     private static String TAG = "MainActivity";
     private static MainActivity instance;
     private static RequestQueue requestQueue;
+
+
+    private BaseService loomoBaseService;
+    private RecognitionService loomoRegocnitionService;
+    private SpeakService loomoSpeakService;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,4 +54,22 @@ public class MainActivity extends Activity {
             requestQueue.cancelAll(TAG);
         }
     }
+
+    private void initServices(){
+        this.loomoBaseService = new BaseService(getRequestQueue());
+        this.loomoRegocnitionService = new RecognitionService(getApplicationContext());
+        this.loomoSpeakService = new SpeakService(getApplicationContext());
+
+    }
+
+    protected void onDestroy(){
+        super.onDestroy();
+        this.loomoBaseService.disconnect();
+        this.loomoRegocnitionService.disconnect();
+        this.loomoSpeakService.disconnect();
+
+    }
+
+
+
 }
