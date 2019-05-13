@@ -62,14 +62,13 @@ public class MainActivity extends Activity {
 
     }
 
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
         this.loomoBaseService.disconnect();
         this.loomoRegocnitionService.disconnect();
         this.loomoSpeakService.disconnect();
 
     }
-
 
 
 }
