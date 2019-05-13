@@ -10,7 +10,6 @@ import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.Volley;
 import com.segway.loomo.services.BaseService;
 import com.segway.loomo.services.RecognitionService;
-import com.segway.loomo.services.Service;
 import com.segway.loomo.services.SpeakService;
 
 public class MainActivity extends Activity {
@@ -18,13 +17,9 @@ public class MainActivity extends Activity {
     private static MainActivity instance;
     private static RequestQueue requestQueue;
 
-
-    private BaseService loomoBaseService;
-    private RecognitionService loomoRegocnitionService;
-    private SpeakService loomoSpeakService;
-
-
-
+    private BaseService baseService;
+    private RecognitionService regocnitionService;
+    private SpeakService speakService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +28,13 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         instance = this;
-        //initServices();
+        initServices();
+    }
+
+    private void initServices(){
+        this.baseService = new BaseService(getApplicationContext());
+        this.regocnitionService = new RecognitionService(getApplicationContext());
+        this.speakService = new SpeakService(getApplicationContext());
     }
 
     public static RequestQueue getRequestQueue() {
@@ -55,19 +56,11 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void initServices(){
-        this.loomoBaseService = new BaseService(getRequestQueue());
-        this.loomoRegocnitionService = new RecognitionService(getApplicationContext());
-        this.loomoSpeakService = new SpeakService(getApplicationContext());
-
-    }
-
     protected void onDestroy() {
         super.onDestroy();
-        this.loomoBaseService.disconnect();
-        this.loomoRegocnitionService.disconnect();
-        this.loomoSpeakService.disconnect();
-
+        this.baseService.disconnect();
+        this.regocnitionService.disconnect();
+        this.speakService.disconnect();
     }
 
 

@@ -1,7 +1,8 @@
 package com.segway.loomo.objects;
 
 public class Car extends AppObject{
-
+    private Category category;
+    private CarModel carModel;
     private String color;
     private int seatNumber;
     private int power;
@@ -10,6 +11,8 @@ public class Car extends AppObject{
     private String fuelType;
     private float maxFuelConsumption;
     private int price;
+
+    public Car() {}
 
     public Car (String color, int seatNumber, int power, int maxSpeed, String transmission,
                 String fuelType, float maxFuelConsumption, int price ){
@@ -21,13 +24,17 @@ public class Car extends AppObject{
         this.fuelType = fuelType;
         this.maxFuelConsumption = maxFuelConsumption;
         this.price = price;
-
     }
 
-    public String getColor() {
+    public Category getCategory() { return category; }
 
-        return color;
-    }
+    public void setCategory(Category category) { this.category = category; }
+
+    public CarModel getCarModel() { return carModel; }
+
+    public void setCarModel(CarModel carModel) { this.carModel = carModel; }
+
+    public String getColor() { return color; }
 
     public void setColor(String color) {
         this.color = color;
@@ -60,10 +67,8 @@ public class Car extends AppObject{
     public String getTransmission(){
         return transmission;
     }
-    public void setTransmission(String transmission){
-        this.transmission = transmission;
 
-    }
+    public void setTransmission(String transmission){ this.transmission = transmission; }
 
     public String getFuelType(){
         return fuelType;
@@ -77,9 +82,7 @@ public class Car extends AppObject{
         return maxFuelConsumption;
     }
 
-    public void setMaxFuelConsumption(float maxFuelConsumption){
-        this.maxFuelConsumption = maxFuelConsumption;
-    }
+    public void setMaxFuelConsumption(float maxFuelConsumption){ this.maxFuelConsumption = maxFuelConsumption; }
 
     public int getPrice(){
         return price;
