@@ -9,6 +9,7 @@ import com.segway.robot.algo.Pose2D;
 import com.segway.robot.algo.PoseVLS;
 import com.segway.robot.algo.minicontroller.CheckPoint;
 import com.segway.robot.algo.minicontroller.CheckPointStateListener;
+import com.segway.robot.algo.minicontroller.ObstacleStateChangedListener;
 import com.segway.robot.sdk.base.bind.ServiceBinder;
 import com.segway.robot.sdk.locomotion.sbv.Base;
 import com.segway.robot.sdk.locomotion.sbv.StartVLSListener;
@@ -106,5 +107,23 @@ public class BaseService extends Service {
     private void setupNavigationVLS() {
         base.startVLS(true, true, startVlsListener);
         base.setOnCheckPointArrivedListener(checkpointListener);
+
+        // setting up Obstacle Avoidance
+        Log.d(TAG, "Obstacle Avoidance is enabled:  " + base.isUltrasonicObstacleAvoidanceEnabled() +
+                ". Distance: " + base.getUltrasonicObstacleAvoidanceDistance());
+        base.setUltrasonicObstacleAvoidanceEnabled(true);
+        base.setUltrasonicObstacleAvoidanceDistance(0.5f);
+        base.setObstacleStateChangeListener(obstacleStateChangedListener);
+
+        Log.d(TAG, "Setting up Obstacle Avoidance:  " + base.isUltrasonicObstacleAvoidanceEnabled() +
+                ". Distance: " + base.getUltrasonicObstacleAvoidanceDistance());
     }
+
+    private ObstacleStateChangedListener obstacleStateChangedListener = new ObstacleStateChangedListener() {
+        @Override
+        public void onObstacleStateChanged(int ObstacleAppearance) {
+            Log.i(TAG, "ObstacleStateChanged " + ObstacleAppearance);
+        }
+        
+    };
 }
