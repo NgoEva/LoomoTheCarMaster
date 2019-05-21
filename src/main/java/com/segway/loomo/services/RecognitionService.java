@@ -220,7 +220,7 @@ public class RecognitionService extends Service {
         modelSlotGrammar.setName("model");
         modelSlotGrammar.addSlot(interest);
         modelSlotGrammar.addSlot(preposition);
-        modelSlotGrammar.addSlot(new Slot("model", false, Arrays.asList("A-Class", "B-Class", "C-Class", "CLA", "CLS", "S-Class", "E-Class", "G-Class", "GLA", "GLC","GLE","V-Class" )));
+        modelSlotGrammar.addSlot(modelName);
 
         generalInformationSlotGrammar = new GrammarConstraint();
         generalInformationSlotGrammar.setName("general information");
