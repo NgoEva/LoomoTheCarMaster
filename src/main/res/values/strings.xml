@@ -36,4 +36,15 @@
     <string name="speech_start">speech started</string>
     <string name="speech_end">speech end</string>
     <string name="speech_error">speech error:</string>
+
+    <string-array name="contact_reason">
+        <item>Additional consulting</item>
+        <item>Test drive</item>
+        <item>Sales offer</item>
+    </string-array>
+
+
+
+
+
 </resources>
