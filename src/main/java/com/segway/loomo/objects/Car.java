@@ -3,6 +3,8 @@ package com.segway.loomo.objects;
 public class Car extends AppObject{
     private Category category;
     private CarModel carModel;
+
+    private String name;
     private String color;
     private int seatNumber;
     private int power;
@@ -14,8 +16,9 @@ public class Car extends AppObject{
 
     public Car() {}
 
-    public Car (String color, int seatNumber, int power, int maxSpeed, String transmission,
+    public Car (String name, String color, int seatNumber, int power, int maxSpeed, String transmission,
                 String fuelType, float maxFuelConsumption, int price ){
+        this.name = name;
         this.color = color;
         this.seatNumber = seatNumber;
         this.power = power;
@@ -24,6 +27,12 @@ public class Car extends AppObject{
         this.fuelType = fuelType;
         this.maxFuelConsumption = maxFuelConsumption;
         this.price = price;
+    }
+
+    public String getName() { return name; }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Category getCategory() { return category; }

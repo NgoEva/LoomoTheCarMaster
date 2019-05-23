@@ -16,7 +16,7 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.segway.loomo"
-        minSdkVersion 22
+        minSdkVersion 24
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"

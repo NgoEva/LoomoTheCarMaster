@@ -77,7 +77,7 @@ public class RequestHandler {
         }
     }
 
-    private ArrayList<? extends AppObject> makeRequest(final String type) {
+    public ArrayList<? extends AppObject> makeRequest(final String type) {
         String url = String.format(this.url, type);
         ArrayList<? extends AppObject> responseObjects = new ArrayList<>();
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
@@ -163,6 +163,7 @@ public class RequestHandler {
             car.setCategory(category);
             car.setCarModel(carModel);
 
+            car.setName(carObject.getString("name"));
             car.setColor(carObject.getString("color"));
             car.setSeatNumber(carObject.getInt("seat_number"));
             car.setPower(carObject.getInt("power"));
@@ -213,7 +214,7 @@ public class RequestHandler {
         return mapObjects;
     }
 
-    private class Collection {
+    public class Collection {
         public static final String CAR_MODELS = "carModels";
         public static final String CATEGORIES = "categories";
         public static final String SHOWROOM_MAP = "showroomMap";

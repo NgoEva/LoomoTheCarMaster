@@ -14,8 +14,7 @@
             android:id="@+id/textView28"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10"
-            android:layout_marginTop="10"
+            android:layout_margin="10dp"
             android:autoText="false"
             android:text="Contact Form" />
 
@@ -23,14 +22,14 @@
             android:id="@+id/textView30"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10"
+            android:layout_margin="10dp"
             android:text="First name" />
 
         <EditText
             android:id="@+id/editText5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10"
+            android:layout_margin="10dp"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="First Name" />
@@ -39,14 +38,14 @@
             android:id="@+id/textView31"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10"
+            android:layout_margin="10dp"
             android:text="Last Name" />
 
         <EditText
             android:id="@+id/editText6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10"
+            android:layout_margin="10dp"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Last Name" />
@@ -55,14 +54,14 @@
             android:id="@+id/textView32"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10"
+            android:layout_margin="10dp"
             android:text="E-Mail" />
 
         <EditText
             android:id="@+id/editText8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10"
+            android:layout_margin="10dp"
             android:ems="10"
             android:inputType="textEmailAddress"
             android:text="E-Mail" />
@@ -71,14 +70,15 @@
             android:id="@+id/textView33"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10"
+            android:layout_margin="10dp"
+            android:width="10dp"
             android:text="Phone Number" />
 
         <EditText
             android:id="@+id/editText9"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10"
+            android:layout_margin="10dp"
             android:ems="10"
             android:inputType="phone"
             android:text="Phone Number" />
@@ -87,14 +87,14 @@
             android:id="@+id/textView34"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10"
+            android:layout_margin="10dp"
             android:text="Address" />
 
         <EditText
             android:id="@+id/editText10"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10"
+            android:layout_margin="10dp"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Address" />
@@ -103,21 +103,21 @@
             android:id="@+id/textView35"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10"
+            android:layout_margin="10dp"
             android:text="Why do you want to be contacted?" />
 
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10" />
+            android:layout_margin="10dp" />
 
         <Button
             android:id="@+id/button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="35"
-            android:layout_marginBottom="30"
+            android:layout_marginTop="35dp"
+            android:layout_marginBottom="30dp"
             android:text="Send" />
 
     </LinearLayout>
