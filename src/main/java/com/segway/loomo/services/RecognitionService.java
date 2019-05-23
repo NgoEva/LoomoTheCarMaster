@@ -25,6 +25,18 @@ public class RecognitionService extends Service {
 
     private GrammarConstraint interestSlotGrammar;
     private GrammarConstraint guidanceSlotGrammar;
+    private GrammarConstraint categorySlotGrammar;
+    private GrammarConstraint modelSlotGrammar;
+    private GrammarConstraint generalInformationSlotGrammar;
+    private GrammarConstraint questionInformationSlotGrammar;
+    private GrammarConstraint noMoreInformationSlotGrammar;
+    private GrammarConstraint humanRequestSlotGrammar;
+    private GrammarConstraint additionalConsultationSlotGrammar;
+    private GrammarConstraint collectInformationSlotGrammar;
+
+
+
+
 
     private Spot spot1 = new Spot(-1.0f, 1.0f);
     private Spot spot2 = new Spot(0f, 1.0f);
@@ -136,15 +148,68 @@ public class RecognitionService extends Service {
     private void initControlGrammer() {
         Log.d(TAG, "init control grammar");
 
+        Slot interest = new Slot( "interest ", false, Arrays.asList("Show me", "I would like to see", "Take me", "Guide me", "Can you show me"));
+        Slot preposition = new Slot("preposition", true, Arrays.asList("to", "a"));
+        Slot answerPos = new Slot("answer positive", false, Arrays.asList("yes", "yeah", "sure", "of course", "yes please"));
+        Slot answerNeg = new Slot("answer negative", false, Arrays.asList("no", "nah", "nope", "no thanks"));
+        Slot article = new Slot("article", true, Arrays.asList("the", "this", "that"));
+        Slot modelName = new Slot("model name", false, Arrays.asList("car", "model", "A-Class", "B-Class", "C-Class", "CLA", "CLS", "S-Class", "E-Class", "G-Class", "GLA", "GLC","GLE","V-Class"));
+
         interestSlotGrammar = new GrammarConstraint();
         interestSlotGrammar.setName("interest");
-        interestSlotGrammar.addSlot(new Slot("positive", false, Arrays.asList("yes", "yeah", "sure", "of course")));
+        interestSlotGrammar.addSlot(answerPos);
+        interestSlotGrammar.addSlot(answerNeg);
 
-        guidanceSlotGrammar = new GrammarConstraint();
-        guidanceSlotGrammar.setName("guidance");
-        guidanceSlotGrammar.addSlot(new Slot("command", false, Arrays.asList("bring me", "guide me", "show me", "take me")));
-        guidanceSlotGrammar.addSlot(new Slot("to", true, Arrays.asList("to")));
-        guidanceSlotGrammar.addSlot(new Slot("car", false, Arrays.asList("car one", "car two", "car three")));
+       /* guidanceSlotGrammar = new GrammarConstraint();
+        *guidanceSlotGrammar.setName("guidance");
+       * guidanceSlotGrammar.addSlot(new Slot("command", false, Arrays.asList("bring me", "guide me", "show me", "take me")));
+        *guidanceSlotGrammar.addSlot(new Slot("to", true, Arrays.asList("to")));
+        *guidanceSlotGrammar.addSlot(new Slot("car", false, Arrays.asList("car one", "car two", "car three")));
+        */
+
+        categorySlotGrammar = new GrammarConstraint();
+        categorySlotGrammar.setName("category");
+        categorySlotGrammar.addSlot(interest);
+        categorySlotGrammar.addSlot(preposition);
+        categorySlotGrammar.addSlot(new Slot("category", false, Arrays.asList("Hatchback", "Coupé", "Saloon", "Cabriolet", "SUV", "MPV" )));
+
+        modelSlotGrammar = new GrammarConstraint();
+        modelSlotGrammar.setName("model");
+        modelSlotGrammar.addSlot(interest);
+        modelSlotGrammar.addSlot(preposition);
+        modelSlotGrammar.addSlot(modelName);
+
+        generalInformationSlotGrammar = new GrammarConstraint();
+        generalInformationSlotGrammar.setName("general information");
+        generalInformationSlotGrammar.addSlot(new Slot("command", false, Arrays.asList("Tell me general information about", "Tell me something about")));
+        generalInformationSlotGrammar.addSlot(article);
+        generalInformationSlotGrammar.addSlot(modelName);
+
+        questionInformationSlotGrammar = new GrammarConstraint();
+        questionInformationSlotGrammar.setName("question information");
+        questionInformationSlotGrammar.addSlot(new Slot("question", false, Arrays.asList("What is the")));
+        questionInformationSlotGrammar.addSlot(new Slot("information type", false, Arrays.asList("name of", "colour of", "seat number of", "power of", "maximum speed of", "transmission of", "fuel type of", "maximum fuel consupmtion of", "price of" ));
+        questionInformationSlotGrammar.addSlot(new Slot("car", false, Arrays.asList("this car", "that car")));
+
+        noMoreInformationSlotGrammar = new GrammarConstraint();
+        noMoreInformationSlotGrammar.setName("more questions");
+        noMoreInformationSlotGrammar.addSlot(answerNeg);
+
+        humanRequestSlotGrammar = new GrammarConstraint();
+        humanRequestSlotGrammar.setName("human request");
+        humanRequestSlotGrammar.addSlot(answerPos);
+        humanRequestSlotGrammar.addSlot(answerNeg);
+
+        additionalConsultationSlotGrammar = new GrammarConstraint();
+        additionalConsultationSlotGrammar.setName("additional consultation");
+        additionalConsultationSlotGrammar.addSlot(new Slot("wanting", false, Arrays.asList("I want to", "I would like to")));
+        additionalConsultationSlotGrammar.addSlot(new Slot("verb", false, Arrays.asList("receive", "do", "have", "make")));
+        additionalConsultationSlotGrammar.addSlot(new Slot("consultation", false, Arrays.asList("an offer", "a phone call", "a test drive")));
+
+        collectInformationSlotGrammar = new GrammarConstraint();
+        collectInformationSlotGrammar.setName("collect customer information");
+        collectInformationSlotGrammar.addSlot(answerPos);
+        collectInformationSlotGrammar.addSlot(answerNeg);
     }
 
     public void startListening() {

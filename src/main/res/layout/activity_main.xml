@@ -8,7 +8,7 @@
     android:orientation="horizontal"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    tools:context="com.segway.loomo.MainActivityOld">
+    tools:context="com.segway.loomo.MainActivity">
 
     <Button
         android:id="@+id/start"
