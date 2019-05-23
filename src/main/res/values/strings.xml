@@ -36,4 +36,5 @@
     <string name="speech_start">speech started</string>
     <string name="speech_end">speech end</string>
     <string name="speech_error">speech error:</string>
+    <string name="start">Start</string>
 </resources>

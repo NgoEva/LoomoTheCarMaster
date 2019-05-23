@@ -11,8 +11,6 @@ import com.segway.robot.sdk.voice.grammar.GrammarConstraint;
 import com.segway.robot.sdk.voice.grammar.Slot;
 import com.segway.robot.sdk.voice.recognition.RecognitionListener;
 import com.segway.robot.sdk.voice.recognition.RecognitionResult;
-import com.segway.robot.sdk.voice.recognition.WakeupListener;
-import com.segway.robot.sdk.voice.recognition.WakeupResult;
 
 import java.util.Arrays;
 
@@ -23,10 +21,8 @@ public class RecognitionService extends Service {
     private Recognizer recognizer;
     private static RecognitionService instance;
 
-    private WakeupListener wakeupListener;
     private RecognitionListener recognitionListener;
 
-    private GrammarConstraint welcomeSlotGrammar;
     private GrammarConstraint interestSlotGrammar;
     private GrammarConstraint guidanceSlotGrammar;
 
@@ -34,10 +30,9 @@ public class RecognitionService extends Service {
     private Spot spot2 = new Spot(0f, 1.0f);
     private Spot spot3 = new Spot(1.0f, 1.0f);
 
-    private boolean wakeup = false;
+    private boolean resetPosition;
+
     private boolean interested = false;
-    private boolean resetPosition = true;
-    private int selectedCar = 0;
 
     public static RecognitionService getInstance() {
         Log.d(TAG, "get recognizer instance");
@@ -50,24 +45,19 @@ public class RecognitionService extends Service {
     public RecognitionService(Context context) {
         Log.d(TAG, "recognition service initiated");
         this.context = context;
-        init();
+        this.init();
+        this.initListeners();
         instance = this;
     }
 
-    public void restartService() {
-        Log.d(TAG, "restart service");
-        init();
-    }
-
+    @Override
     public void init() {
-        this.recognizer = Recognizer.getInstance();
-        initListeners();
-        this.recognizer.bindService(this.context, new ServiceBinder.BindStateListener() {
+        recognizer = Recognizer.getInstance();
+        recognizer.bindService(this.context, new ServiceBinder.BindStateListener() {
             @Override
             public void onBind() {
                 Log.d(TAG, "recognizer service bound successfully");
                 initControlGrammer();
-                RecognitionService.getInstance().startListening();
             }
 
             @Override
@@ -78,31 +68,6 @@ public class RecognitionService extends Service {
     }
 
     public void initListeners(){
-        wakeupListener = new WakeupListener() {
-            @Override
-            public void onStandby() {
-                Log.i(TAG, "in Standby");
-            }
-
-            @Override
-            public void onWakeupResult(WakeupResult wakeupResult) {
-                Log.i(TAG, "got wakeup result: " + wakeupResult);
-                wakeup = true;
-                SpeakService.getInstance().speak("Hello, I am Loomo, the Car Master. Are you interested in getting some information about the cars?");
-                try {
-                    recognizer.addGrammarConstraint(interestSlotGrammar);
-                    recognizer.startRecognitionMode(recognitionListener);
-                }
-                catch (VoiceException e) {
-                    Log.w(TAG, "Exception: ", e);
-                }
-            }
-
-            @Override
-            public void onWakeupError(String error) {
-                Log.i(TAG, "got wakeup error: " + error);
-            }
-        };
 
         recognitionListener = new RecognitionListener() {
             @Override
@@ -117,43 +82,41 @@ public class RecognitionService extends Service {
                         ", confidence:" + recognitionResult.getConfidence());
                 String result = recognitionResult.getRecognitionResult();
 
-                if (wakeup && !interested) {
+                if(!interested) {
                     if (result.contains("yes") || result.contains("yeah") || result.contains("of course") || result.contains("sure")) {
                         Log.d(TAG, "customer is interested");
+                        interested = true;
                         try {
-                            interested = true;
                             SpeakService.getInstance().speak("Which car should I show you?");
                             recognizer.removeGrammarConstraint(interestSlotGrammar);
                             recognizer.addGrammarConstraint(guidanceSlotGrammar);
+                            return true;
                         } catch (VoiceException e) {
                             Log.e(TAG, "Exception: ", e);
                         }
+                        return true;
                     }
+                    return true;
                 }
 
-                if (wakeup && interested) {
-                    if (resetPosition) BaseService.getInstance().resetPosition();
-                    if (result.contains("car one") || result.contains("first car")) {
+                if(interested) {
+                    if (result.contains("bring me to car one") || result.contains("guide me to car one") || result.contains("show me car one")) {
+                        BaseService.getInstance().resetPosition();
                         Log.d(TAG, "selected car: 1");
-                        selectedCar = 1;
                         SpeakService.getInstance().speak("Alright. Follow me. I will guide you to car one.");
-                        BaseService.getInstance().startNavigation(spot1);
+                        BaseService.getInstance().startNavigation(resetPosition, spot1);
                         resetPosition = false;
                         return true;
-                    }
-                    else if (result.contains("car two") || result.contains("second car")) {
+                    } else if (result.contains("bring me to car two")) {
                         Log.d(TAG, "selected car: 2");
-                        selectedCar = 2;
                         SpeakService.getInstance().speak("Alright. Follow me. I will guide you to car two.");
-                        BaseService.getInstance().startNavigation(spot2);
+                        BaseService.getInstance().startNavigation(resetPosition, spot2);
                         resetPosition = false;
                         return true;
-                    }
-                    else if (result.contains("car three") || result.contains("third car")) {
+                    } else if (result.contains("bring me to car three")) {
                         Log.d(TAG, "selected car: 3");
-                        selectedCar = 3;
                         SpeakService.getInstance().speak("Alright. Follow me. I will guide you to car three.");
-                        BaseService.getInstance().startNavigation(spot3);
+                        BaseService.getInstance().startNavigation(resetPosition, spot3);
                         resetPosition = false;
                         return true;
                     }
@@ -165,7 +128,7 @@ public class RecognitionService extends Service {
             @Override
             public boolean onRecognitionError(String error) {
                 Log.i(TAG, "recognition error: " + error);
-                return false;
+                return true;
             }
         };
     }
@@ -173,15 +136,9 @@ public class RecognitionService extends Service {
     private void initControlGrammer() {
         Log.d(TAG, "init control grammar");
 
-        welcomeSlotGrammar = new GrammarConstraint();
-        welcomeSlotGrammar.setName("welcome");
-        welcomeSlotGrammar.addSlot(new Slot("greeting", false, Arrays.asList("hello", "hey", "hi", "okay")));
-        welcomeSlotGrammar.addSlot(new Slot("loomo", false, Arrays.asList("loomo", "robot")));
-
         interestSlotGrammar = new GrammarConstraint();
         interestSlotGrammar.setName("interest");
         interestSlotGrammar.addSlot(new Slot("positive", false, Arrays.asList("yes", "yeah", "sure", "of course")));
-        interestSlotGrammar.addSlot(new Slot("negative", false, Arrays.asList("no", "nah")));
 
         guidanceSlotGrammar = new GrammarConstraint();
         guidanceSlotGrammar.setName("guidance");
@@ -192,10 +149,13 @@ public class RecognitionService extends Service {
 
     public void startListening() {
         Log.d(TAG, "start listening");
+        SpeakService.getInstance().speak("Hello, I am Loomo, the Car Master. Do you want to know something about our cars?");
         try {
-            recognizer.startWakeupMode(wakeupListener);
-        } catch (VoiceException e) {
-            Log.e(TAG, "got VoiceException", e);
+            recognizer.addGrammarConstraint(interestSlotGrammar);
+            recognizer.startRecognitionMode(recognitionListener);
+        }
+        catch (VoiceException e) {
+            Log.w(TAG, "Exception: ", e);
         }
     }
 
@@ -211,6 +171,6 @@ public class RecognitionService extends Service {
 
     public void disconnect() {
         Log.d(TAG, "unbind recognizer service");
-        this.recognizer.unbindService();
+        recognizer.unbindService();
     }
 }

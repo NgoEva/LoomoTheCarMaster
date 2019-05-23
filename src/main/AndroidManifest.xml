@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Holo.Light">
-        <activity android:name="com.segway.loomo.MainActivityOld"
+        <activity android:name="com.segway.loomo.MainActivity"
                   android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

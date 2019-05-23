@@ -3,23 +3,22 @@ package com.segway.loomo;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonRequest;
-import com.android.volley.toolbox.Volley;
 import com.segway.loomo.services.BaseService;
 import com.segway.loomo.services.RecognitionService;
 import com.segway.loomo.services.SpeakService;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener {
     private static String TAG = "MainActivity";
-    private static MainActivity instance;
-    private static RequestQueue requestQueue;
 
     private BaseService baseService;
-    private RecognitionService regocnitionService;
+    private RecognitionService recognitionService;
     private SpeakService speakService;
+    private RequestHandler requestHandler;
+
+    private Button start;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,41 +26,40 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        instance = this;
-        initServices();
+        this.initServices();
+        this.initButtons();
     }
 
     private void initServices(){
+        Log.d(TAG, "init services");
         this.baseService = new BaseService(getApplicationContext());
-        this.regocnitionService = new RecognitionService(getApplicationContext());
+        this.recognitionService = new RecognitionService(getApplicationContext());
         this.speakService = new SpeakService(getApplicationContext());
+        this.requestHandler = new RequestHandler(getApplicationContext());
     }
 
-    public static RequestQueue getRequestQueue() {
-        if (requestQueue == null) {
-            requestQueue = Volley.newRequestQueue(instance.getApplicationContext());
-        }
-        return requestQueue;
-    }
-
-    public static void addToRequestQueue(JsonRequest request) {
-        VolleyLog.d("Adding request to queue: %s", request.getUrl());
-        request.setTag(TAG);
-        getRequestQueue().add(request);
-    }
-
-    public static void cancelPendingRequests() {
-        if(requestQueue != null) {
-            requestQueue.cancelAll(TAG);
-        }
+    private void initButtons() {
+        Log.d(TAG, "init buttons");
+        start = (Button) findViewById(R.id.start);
+        start.setOnClickListener(this);
     }
 
     protected void onDestroy() {
+        Log.d(TAG, "destroy");
         super.onDestroy();
         this.baseService.disconnect();
-        this.regocnitionService.disconnect();
+        this.recognitionService.disconnect();
         this.speakService.disconnect();
+        this.requestHandler.cancelPendingRequests();
     }
 
-
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.start:
+                Log.d(TAG, "start-button clicked");
+                start.setEnabled(false);
+                RecognitionService.getInstance().startListening();
+        }
+    }
 }

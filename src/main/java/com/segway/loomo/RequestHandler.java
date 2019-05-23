@@ -1,9 +1,14 @@
 package com.segway.loomo;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.Volley;
 import com.segway.loomo.objects.AppObject;
 import com.segway.loomo.objects.CarModel;
 import com.segway.loomo.objects.Category;
@@ -20,9 +25,29 @@ import java.util.concurrent.ExecutionException;
 
 public class RequestHandler {
     private static String TAG = "RequestHandler";
-    String url = "https://loomo.exocreations.de/api/collections/get/%s?token=account-1d02ac9dab107851012a327336009c";
-    String body = "{\"populate\":1}";
-    JSONObject jsonRequestBody;
+    private final Context context;
+
+    private static RequestQueue requestQueue;
+    private static RequestHandler requestHandler;
+
+    private String url = "https://loomo.exocreations.de/api/collections/get/%s?token=account-1d02ac9dab107851012a327336009c";
+    private String body = "{\"populate\":1}";
+    private JSONObject jsonRequestBody;
+
+    public static RequestHandler getInstance() {
+        Log.d(TAG, "get request handler instance");
+        if (requestHandler == null) {
+            throw new IllegalStateException("request handler instance not initialized yet");
+        }
+        return requestHandler;
+    }
+
+    public RequestHandler(Context context) {
+        Log.d(TAG, "request handler initiated");
+        this.context = context;
+        init();
+        requestHandler = this;
+    }
 
     public void init() {
         try {
@@ -33,6 +58,25 @@ public class RequestHandler {
         }
     }
 
+    public RequestQueue getRequestQueue() {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+        return requestQueue;
+    }
+
+    public void addToRequestQueue(JsonRequest request) {
+        VolleyLog.d("Adding request to queue: %s", request.getUrl());
+        request.setTag(TAG);
+        getRequestQueue().add(request);
+    }
+
+    public void cancelPendingRequests() {
+        if(requestQueue != null) {
+            requestQueue.cancelAll(TAG);
+        }
+    }
+
     private ArrayList<? extends AppObject> makeRequest(final String type) {
         String url = String.format(this.url, type);
         ArrayList<? extends AppObject> responseObjects = new ArrayList<>();
@@ -40,19 +84,24 @@ public class RequestHandler {
         JSONObject response;
 
         JsonObjectRequest request = new JsonObjectRequest(url, jsonRequestBody, future, future);
-        MainActivity.addToRequestQueue(request);
+        addToRequestQueue(request);
 
         try {
             response = future.get();
-            if(type == Collection.CAR_MODELS) {
-                responseObjects = mapCarModels(response);
+            switch (type) {
+                case Collection.CAR_MODELS:
+                    responseObjects = mapCarModels(response);
+                    break;
+                case Collection.CATEGORIES:
+                    responseObjects = mapCategories(response);
+                    break;
+                case Collection.SHOWROOM_MAP:
+                    responseObjects = mapMapObjects(response);
+                    break;
+                default:
+                    return null;
             }
-            else if(type == Collection.CATEGORIES) {
-                responseObjects = mapCategories(response);
-            }
-            else if(type == Collection.SHOWROOM_MAP) {
-                responseObjects = mapMapObjects(response);
-            }
+            return responseObjects;
         }
         catch(ExecutionException e) {
             Log.w( null, "Exception: ", e);
@@ -60,7 +109,7 @@ public class RequestHandler {
         catch(InterruptedException e) {
             Log.w( null, "Exception: ", e);
         }
-        return responseObjects;
+        return null;
     }
 
     private ArrayList<CarModel> mapCarModels(JSONObject response) {

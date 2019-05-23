@@ -35,13 +35,14 @@ public class BaseService extends Service {
     public BaseService(Context context) {
         Log.d(TAG, "base service initiated");
         this.context = context;
-        init();
+        this.init();
         instance = this;
     }
 
     @Override
     public void init() {
         base = Base.getInstance();
+        this.initListeners();
         base.bindService(context, new ServiceBinder.BindStateListener() {
             @Override
             public void onBind() {
@@ -71,6 +72,7 @@ public class BaseService extends Service {
 
             }
         };
+
         checkpointListener = new CheckPointStateListener() {
             public void onCheckPointArrived(CheckPoint checkPoint, final Pose2D realPose, boolean isLast) {
                 Log.i(TAG, "Arrived to checkpoint: " + checkPoint);
@@ -86,37 +88,41 @@ public class BaseService extends Service {
     @Override
     public void disconnect() {
         Log.d(TAG, "unbind base service");
-        this.base.unbindService();
+        base.unbindService();
     }
 
 
     public void resetPosition() {
         Log.d(TAG, "reset original point");
-        this.base.cleanOriginalPoint();
+        setupNavigationVLS();
+        base.cleanOriginalPoint();
         PoseVLS pose2D = base.getVLSPose(-1);
-        this.base.setOriginalPoint(pose2D);
+        base.setOriginalPoint(pose2D);
     }
 
-    public void startNavigation(Spot spot) {
+    public void startNavigation(boolean resetPosition, Spot spot) {
         Log.i(TAG, "start navigation");
+        if (resetPosition) this.resetPosition();
         setupNavigationVLS();
         Log.i(TAG, "Moving to: " + spot.toString());
-        this.base.addCheckPoint(spot.getX_coordinate(), spot.getY_coordinate());
+        base.addCheckPoint(spot.getX_coordinate(), spot.getY_coordinate());
     }
 
     private void setupNavigationVLS() {
-        base.startVLS(true, true, startVlsListener);
-        base.setOnCheckPointArrivedListener(checkpointListener);
+        if (!base.isVLSStarted()) {
+            base.startVLS(true, true, startVlsListener);
+            base.setOnCheckPointArrivedListener(checkpointListener);
 
-        // setting up Obstacle Avoidance
-        Log.d(TAG, "Obstacle Avoidance is enabled:  " + base.isUltrasonicObstacleAvoidanceEnabled() +
-                ". Distance: " + base.getUltrasonicObstacleAvoidanceDistance());
-        base.setUltrasonicObstacleAvoidanceEnabled(true);
-        base.setUltrasonicObstacleAvoidanceDistance(0.5f);
-        base.setObstacleStateChangeListener(obstacleStateChangedListener);
+            // setting up Obstacle Avoidance
+            Log.d(TAG, "Obstacle Avoidance is enabled:  " + base.isUltrasonicObstacleAvoidanceEnabled() +
+                    ". Distance: " + base.getUltrasonicObstacleAvoidanceDistance());
+            base.setUltrasonicObstacleAvoidanceEnabled(true);
+            base.setUltrasonicObstacleAvoidanceDistance(0.5f);
+            base.setObstacleStateChangeListener(obstacleStateChangedListener);
 
-        Log.d(TAG, "Setting up Obstacle Avoidance:  " + base.isUltrasonicObstacleAvoidanceEnabled() +
-                ". Distance: " + base.getUltrasonicObstacleAvoidanceDistance());
+            Log.d(TAG, "Setting up Obstacle Avoidance:  " + base.isUltrasonicObstacleAvoidanceEnabled() +
+                    ". Distance: " + base.getUltrasonicObstacleAvoidanceDistance());
+        }
     }
 
     private ObstacleStateChangedListener obstacleStateChangedListener = new ObstacleStateChangedListener() {
