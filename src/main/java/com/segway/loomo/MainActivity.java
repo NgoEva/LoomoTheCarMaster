@@ -59,6 +59,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.start:
                 Log.d(TAG, "start-button clicked");
                 start.setEnabled(false);
+                SpeakService.getInstance().speak("Hello, I am Loomo, the Car Master. Do you want to know something about our cars?");
                 RecognitionService.getInstance().startListening();
         }
     }

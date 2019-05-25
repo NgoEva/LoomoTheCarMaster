@@ -89,9 +89,9 @@ public class RequestHandler {
         try {
             response = future.get();
             switch (type) {
-                case Collection.CAR_MODELS:
+                /*case Collection.CAR_MODELS:
                     responseObjects = mapCarModels(response);
-                    break;
+                    break;*/
                 case Collection.CATEGORIES:
                     responseObjects = mapCategories(response);
                     break;
@@ -112,7 +112,7 @@ public class RequestHandler {
         return null;
     }
 
-    private ArrayList<CarModel> mapCarModels(JSONObject response) {
+   /* private ArrayList<CarModel> mapCarModels(JSONObject response) {
         ArrayList<CarModel> carModels = new ArrayList<CarModel>();
         try {
             JSONArray objects = response.getJSONArray("entries");
@@ -128,7 +128,7 @@ public class RequestHandler {
         }
 
         return carModels;
-    }
+    }*/
 
     private ArrayList<Category> mapCategories(JSONObject response) {
         ArrayList<Category> categories = new ArrayList<Category>();
@@ -201,11 +201,9 @@ public class RequestHandler {
             for (int i = 0; i < objects.length(); i++) {
                 JSONObject obj = objects.getJSONObject(i);
                 MapObject mapObject = new MapObject();
-                for(int j = 0; j < obj.length(); j++){
-                    mapObject.setCar(mapCar(obj));
-                    mapObject.setSpot(mapSpot(obj));
-                    mapObjects.add(mapObject);
-                }
+                mapObject.setCar(mapCar(obj));
+                mapObject.setSpot(mapSpot(obj));
+                mapObjects.add(mapObject);
             }
         } catch(JSONException e) {
             Log.d( TAG, "Exception: ", e);
@@ -215,7 +213,7 @@ public class RequestHandler {
     }
 
     public class Collection {
-        public static final String CAR_MODELS = "carModels";
+        //public static final String CAR_MODELS = "carModels";
         public static final String CATEGORIES = "categories";
         public static final String SHOWROOM_MAP = "showroomMap";
     }
