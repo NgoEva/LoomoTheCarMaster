@@ -35,14 +35,14 @@ public class BaseService extends Service {
     public BaseService(Context context) {
         Log.d(TAG, "base service initiated");
         this.context = context;
-        this.init();
+        init();
+        initListeners();
         instance = this;
     }
 
     @Override
     public void init() {
         base = Base.getInstance();
-        this.initListeners();
         base.bindService(context, new ServiceBinder.BindStateListener() {
             @Override
             public void onBind() {

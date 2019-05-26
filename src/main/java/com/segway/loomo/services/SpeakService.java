@@ -30,14 +30,14 @@ public class SpeakService extends Service {
     public SpeakService(Context context) {
         Log.d(TAG, "speaker service initiated");
         this.context = context;
-        this.init();
+        init();
+        initListeners();
         instance = this;
     }
 
     @Override
     public void init() {
         speaker = Speaker.getInstance();
-        this.initListeners();
         speaker.bindService(context, new ServiceBinder.BindStateListener() {
             @Override
             public void onBind() {

@@ -4,12 +4,12 @@ import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
-import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
-import com.segway.loomo.objects.AppObject;
 import com.segway.loomo.objects.CarModel;
 import com.segway.loomo.objects.Category;
 import com.segway.loomo.objects.Car;
@@ -21,7 +21,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 public class RequestHandler {
     private static String TAG = "RequestHandler";
@@ -61,6 +60,7 @@ public class RequestHandler {
     public RequestQueue getRequestQueue() {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
+            requestQueue.start();
         }
         return requestQueue;
     }
@@ -77,39 +77,34 @@ public class RequestHandler {
         }
     }
 
-    public ArrayList<? extends AppObject> makeRequest(final String type) {
+    public void makeRequest(final String type) {
         String url = String.format(this.url, type);
-        ArrayList<? extends AppObject> responseObjects = new ArrayList<>();
-        RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JSONObject response;
 
-        JsonObjectRequest request = new JsonObjectRequest(url, jsonRequestBody, future, future);
-        addToRequestQueue(request);
-
-        try {
-            response = future.get();
-            switch (type) {
-                /*case Collection.CAR_MODELS:
-                    responseObjects = mapCarModels(response);
-                    break;*/
-                case Collection.CATEGORIES:
-                    responseObjects = mapCategories(response);
-                    break;
-                case Collection.SHOWROOM_MAP:
-                    responseObjects = mapMapObjects(response);
-                    break;
-                default:
-                    return null;
+        JsonObjectRequest request = new JsonObjectRequest(url, jsonRequestBody, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d(TAG, response.toString());
+                /*if(type == Collection.CAR_MODELS) {
+                    Log.d(TAG, "got response for car models");
+                    mapCarModels(response);
+                }*/
+                if(type == Collection.CATEGORIES) {
+                    Log.d(TAG, "got response for categories");
+                    mapCategories(response);
+                }
+                else if(type == Collection.SHOWROOM_MAP) {
+                    Log.d(TAG, "got response for showroom map");
+                    mapMapObjects(response);
+                }
             }
-            return responseObjects;
-        }
-        catch(ExecutionException e) {
-            Log.w( null, "Exception: ", e);
-        }
-        catch(InterruptedException e) {
-            Log.w( null, "Exception: ", e);
-        }
-        return null;
+
+        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //This code is executed if there is an error.
+            }
+        });
+        addToRequestQueue(request);
     }
 
    /* private ArrayList<CarModel> mapCarModels(JSONObject response) {
@@ -130,7 +125,7 @@ public class RequestHandler {
         return carModels;
     }*/
 
-    private ArrayList<Category> mapCategories(JSONObject response) {
+    private void mapCategories(JSONObject response) {
         ArrayList<Category> categories = new ArrayList<Category>();
         try {
             JSONArray objects = response.getJSONArray("entries");
@@ -144,8 +139,7 @@ public class RequestHandler {
         catch(JSONException e) {
             Log.d( TAG, "Exception: ", e);
         }
-
-        return categories;
+        MainActivity.categories = categories;
     }
 
     private Car mapCar(JSONObject obj) {
@@ -194,7 +188,7 @@ public class RequestHandler {
         return spot;
     }
 
-    private ArrayList<MapObject> mapMapObjects(JSONObject response) {
+    private void mapMapObjects(JSONObject response) {
         ArrayList<MapObject> mapObjects = new ArrayList<MapObject>();
         try {
             JSONArray objects = response.getJSONArray("entries");
@@ -208,8 +202,7 @@ public class RequestHandler {
         } catch(JSONException e) {
             Log.d( TAG, "Exception: ", e);
         }
-
-        return mapObjects;
+        MainActivity.cars = mapObjects;
     }
 
     public class Collection {

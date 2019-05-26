@@ -3,6 +3,7 @@ package com.segway.loomo.services;
 import android.content.Context;
 import android.util.Log;
 
+import com.segway.loomo.MainActivity;
 import com.segway.loomo.RequestHandler;
 import com.segway.loomo.objects.CarModel;
 import com.segway.loomo.objects.Category;
@@ -42,11 +43,8 @@ public class RecognitionService extends Service {
     private boolean resetPosition = true;
     private String dialogueStatus = "";
 
-    private ArrayList<Category> categories;
-    private ArrayList<CarModel> carModels;
-    private ArrayList<MapObject> mapObjects;
-
     private ArrayList<MapObject> carOptions = new ArrayList<>();
+    private ArrayList<CarModel> carModelOptions;
     private MapObject selectedMapObject;
 
     /**
@@ -68,8 +66,8 @@ public class RecognitionService extends Service {
     public RecognitionService(Context context) {
         Log.d(TAG, "recognition service initiated");
         this.context = context;
-        this.init();
-        this.initListeners();
+        init();
+        initListeners();
         instance = this;
     }
 
@@ -118,11 +116,11 @@ public class RecognitionService extends Service {
                         Log.d(TAG, "customer is interested");
 
                         // get categories from database
-                        categories = (ArrayList<Category>) RequestHandler.getInstance().makeRequest(RequestHandler.Collection.CATEGORIES);
-                        /*carModels = (ArrayList<CarModel>) RequestHandler.getInstance().makeRequest(RequestHandler.Collection.CAR_MODELS);*/
+                        RequestHandler.getInstance().makeRequest(RequestHandler.Collection.CATEGORIES);
+                        /*carModelOptions = (ArrayList<CarModel>) RequestHandler.getInstance().makeRequest(RequestHandler.Collection.CAR_MODELS);*/
 
                         // get map objects from database which include the car and its respective spot
-                        mapObjects = (ArrayList<MapObject>) RequestHandler.getInstance().makeRequest(RequestHandler.Collection.SHOWROOM_MAP);
+                        RequestHandler.getInstance().makeRequest(RequestHandler.Collection.SHOWROOM_MAP);
 
                         try {
                             recognizer.removeGrammarConstraint(yesSlotGrammar);
@@ -131,7 +129,7 @@ public class RecognitionService extends Service {
                             SpeakService.getInstance().speak("What category are you interested in?");
 
                             // tell customer each available category
-                            for (Category cat : categories) {
+                            for (Category cat : MainActivity.categories) {
                                 SpeakService.getInstance().speak(cat.getName());
                             }
                             dialogueStatus = DialogueStatus.CUSTOMER_INTERESTED;
@@ -162,7 +160,7 @@ public class RecognitionService extends Service {
                     Log.d(TAG, "customer is selecting category");
                     boolean categoryFound = false;
                     // loop through the categories to check which category the customer selected
-                    for (Category cat : categories) {
+                    for (Category cat : MainActivity.categories) {
                         if (result.toLowerCase().contains(cat.getName().toLowerCase())) {
                             Log.d(TAG, cat.getName() + " is selected");
                             categoryFound = true;
@@ -171,14 +169,14 @@ public class RecognitionService extends Service {
                             carOptions = filterMapObjectsByCategory(cat);
 
                             // get the available car models of the car options
-                            carModels = getCarModelsOfCarOptions();
+                            carModelOptions = getCarModelsOfCarOptions();
                             try {
                                 recognizer.removeGrammarConstraint(categorySlotGrammar);
                                 recognizer.addGrammarConstraint(modelSlotGrammar);
                                 SpeakService.getInstance().speak("Alright. Please tell me which model I should show you. Available models for this category are: ");
 
                                 // tell customer each available car model for the selected category
-                                for (CarModel model : carModels) {
+                                for (CarModel model : carModelOptions) {
                                     SpeakService.getInstance().speak(model.getName());
                                 }
                                 dialogueStatus = DialogueStatus.CATEGORY_SELECTED;
@@ -360,7 +358,7 @@ public class RecognitionService extends Service {
                         SpeakService.getInstance().speak("What category are you interested in?");
 
                         // tell customer each available category
-                        for (Category cat : categories) {
+                        for (Category cat : MainActivity.categories) {
                             SpeakService.getInstance().speak(cat.getName());
                         }
                         dialogueStatus = DialogueStatus.CUSTOMER_INTERESTED;
@@ -578,7 +576,7 @@ public class RecognitionService extends Service {
      */
     private ArrayList<MapObject> filterMapObjectsByCategory(Category cat) {
         ArrayList<MapObject> carObjects = new ArrayList<>();
-        for (MapObject obj : mapObjects) {
+        for (MapObject obj : MainActivity.cars) {
             if(obj.getCar().getCategory().getName().equals(cat.getName())) {
                 carObjects.add(obj);
             }

@@ -6,9 +6,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.segway.loomo.objects.Category;
+import com.segway.loomo.objects.MapObject;
 import com.segway.loomo.services.BaseService;
 import com.segway.loomo.services.RecognitionService;
 import com.segway.loomo.services.SpeakService;
+
+import java.util.ArrayList;
 
 public class MainActivity extends Activity implements View.OnClickListener {
     private static String TAG = "MainActivity";
@@ -19,6 +23,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private RequestHandler requestHandler;
 
     private Button start;
+
+    public static ArrayList<Category> categories;
+    public static ArrayList<MapObject> cars;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +67,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.start:
                 Log.d(TAG, "start-button clicked");
                 start.setEnabled(false);
-                SpeakService.getInstance().speak("Hello, I am Loomo, the Car Master. Do you want to know something about our cars?");
-                RecognitionService.getInstance().startListening();
+                speakService.speak("Hello, I am Loomo, the Car Master. Do you want to know something about our cars?");
+                recognitionService.startListening();
         }
     }
 }
