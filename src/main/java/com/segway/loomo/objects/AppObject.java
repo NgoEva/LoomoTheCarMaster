@@ -1,5 +1,8 @@
 package com.segway.loomo.objects;
 
+/**
+ * abstract class which represents a basic business object in this application
+ */
 public abstract class AppObject {
 
     private String id = "";

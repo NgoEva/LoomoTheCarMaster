@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.segway.loomo.MainActivity;
-import com.segway.loomo.RequestHandler;
 import com.segway.loomo.objects.CarModel;
 import com.segway.loomo.objects.Category;
 import com.segway.loomo.objects.MapObject;
@@ -20,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * class to provide the recognition service and handle recognition results
+ */
 public class RecognitionService extends Service {
     private static final String TAG = "RecognitionService";
     private final Context context;
@@ -43,12 +45,12 @@ public class RecognitionService extends Service {
     private boolean resetPosition = true;
     private String dialogueStatus = "";
 
-    private ArrayList<MapObject> carOptions = new ArrayList<>();
+    private ArrayList<MapObject> carOptions;
     private ArrayList<CarModel> carModelOptions;
     private MapObject selectedMapObject;
 
     /**
-     * return the recognizer instance
+     * returns the recognizer instance
      * @return RecognitionService
      */
     public static RecognitionService getInstance() {
@@ -114,13 +116,6 @@ public class RecognitionService extends Service {
                 if (dialogueStatus.equals(DialogueStatus.START_DIALOGUE)) {
                     if (isCommand(result, yesCommandList)) {
                         Log.d(TAG, "customer is interested");
-
-                        // get categories from database
-                        RequestHandler.getInstance().makeRequest(RequestHandler.Collection.CATEGORIES);
-                        /*carModelOptions = (ArrayList<CarModel>) RequestHandler.getInstance().makeRequest(RequestHandler.Collection.CAR_MODELS);*/
-
-                        // get map objects from database which include the car and its respective spot
-                        RequestHandler.getInstance().makeRequest(RequestHandler.Collection.SHOWROOM_MAP);
 
                         try {
                             recognizer.removeGrammarConstraint(yesSlotGrammar);
@@ -348,6 +343,7 @@ public class RecognitionService extends Service {
 
                     else if (isCommand(result, yesCommandList)) {
                         Log.d(TAG, "customer wants to see another car");
+
                         try {
                             recognizer.removeGrammarConstraint(yesSlotGrammar);
                             recognizer.removeGrammarConstraint(noSlotGrammar);
@@ -362,6 +358,7 @@ public class RecognitionService extends Service {
                             SpeakService.getInstance().speak(cat.getName());
                         }
                         dialogueStatus = DialogueStatus.CUSTOMER_INTERESTED;
+
                         return true;
                     }
                     return true;
@@ -421,15 +418,15 @@ public class RecognitionService extends Service {
                         Log.d(TAG, "customer wants additional consultation");
                         if (result.contains("offer")) {
                             Log.d(TAG, "customer wants a sales offer");
-                            //write offer into database
+                            //MainActivity.customer.setInterest("offer");
                         }
                         else if (result.contains("phone call")) {
                             Log.d(TAG, "customer wants a phone call");
-                            //write phone call into database
+                            //MainActivity.customer.setInterest("phone call");
                         }
                         else if (result.contains("test drive")) {
                             Log.d(TAG, "customer wants a test drive");
-                            //write test drive into database
+                            //MainActivity.customer.setInterest("test drive");
                         }
                         try {
                             recognizer.removeGrammarConstraint(additionalConsultationSlotGrammar);
@@ -451,7 +448,7 @@ public class RecognitionService extends Service {
                     if (isCommand(result, yesCommandList)) {
                         shouldRemove = true;
                         SpeakService.getInstance().speak("Please enter your contact information on the screen and confirm.");
-                        //show contact form --> on send button pressed: SpeakService.getInstance().speak("Thank you! We will contact you as soon as possible. Goodbye and have a nice day!");
+                        //show contact form --> on send button pressed
                     }
                     else if (isCommand(result, noCommandList)) {
                         shouldRemove = true;
@@ -486,56 +483,61 @@ public class RecognitionService extends Service {
     private void initControlGrammar() {
         Log.d(TAG, "init control grammar");
 
-        Slot interest = new Slot( "interest ", false, Arrays.asList("show me", "I would like to see", "take me", "guide me", "can you show me",
-                "I want to see", "I am interested in"));
-        Slot preposition = new Slot("preposition", true, Arrays.asList("to"));
-        Slot article = new Slot("article", true, Arrays.asList("the", "this", "that", "a"));
-        Slot modelName = new Slot("model name", false, Arrays.asList("car", "model", "A class", "B class", "C class", "CLA", "CLS", "S class",
-                "E class", "G class", "GLA", "GLC","GLE","V class"));
+        new Thread() {
+            @Override
+            public void run() {
+                Slot interest = new Slot( "interest ", false, Arrays.asList("show me", "I would like to see", "take me", "guide me", "can you show me",
+                        "I want to see", "I am interested in"));
+                Slot preposition = new Slot("preposition", true, Arrays.asList("to"));
+                Slot article = new Slot("article", true, Arrays.asList("the", "this", "that", "a"));
+                Slot modelName = new Slot("model name", false, Arrays.asList("car", "model", "A class", "B class", "C class", "CLA", "CLS", "S class",
+                        "E class", "G class", "GLA", "GLC","GLE","V class"));
 
-        yesCommandList = Arrays.asList("yes", "yeah", "sure", "of course", "yes please");
-        noCommandList = Arrays.asList("no", "nah", "nope", "no thanks");
+                yesCommandList = Arrays.asList("yes", "yeah", "sure", "of course", "yes please");
+                noCommandList = Arrays.asList("no", "nah", "nope", "no thanks");
 
-        yesSlotGrammar = new GrammarConstraint();
-        yesSlotGrammar.setName("yes");
-        yesSlotGrammar.addSlot(new Slot("answer positive", false, yesCommandList));
+                yesSlotGrammar = new GrammarConstraint();
+                yesSlotGrammar.setName("yes grammar");
+                yesSlotGrammar.addSlot(new Slot("answer positive", false, yesCommandList));
 
-        noSlotGrammar = new GrammarConstraint();
-        noSlotGrammar.setName("no");
-        noSlotGrammar.addSlot(new Slot("answer negative", false, noCommandList));
+                noSlotGrammar = new GrammarConstraint();
+                noSlotGrammar.setName("no grammar");
+                noSlotGrammar.addSlot(new Slot("answer negative", false, noCommandList));
 
-        categorySlotGrammar = new GrammarConstraint();
-        categorySlotGrammar.setName("category");
-        categorySlotGrammar.addSlot(interest);
-        categorySlotGrammar.addSlot(article);
-        categorySlotGrammar.addSlot(new Slot("category", false, Arrays.asList("hatchback", "coupé", "saloon", "cabriolet", "SUV", "MPV" )));
+                categorySlotGrammar = new GrammarConstraint();
+                categorySlotGrammar.setName("category grammar");
+                categorySlotGrammar.addSlot(interest);
+                categorySlotGrammar.addSlot(article);
+                categorySlotGrammar.addSlot(new Slot("category", false, Arrays.asList("hatchback", "coupe", "saloon", "cabriolet", "SUV", "MPV" )));
 
-        modelSlotGrammar = new GrammarConstraint();
-        modelSlotGrammar.setName("model");
-        modelSlotGrammar.addSlot(interest);
-        modelSlotGrammar.addSlot(preposition);
-        modelSlotGrammar.addSlot(article);
-        modelSlotGrammar.addSlot(modelName);
+                modelSlotGrammar = new GrammarConstraint();
+                modelSlotGrammar.setName("model grammar");
+                modelSlotGrammar.addSlot(interest);
+                modelSlotGrammar.addSlot(preposition);
+                modelSlotGrammar.addSlot(article);
+                modelSlotGrammar.addSlot(modelName);
 
-        generalInformationSlotGrammar = new GrammarConstraint();
-        generalInformationSlotGrammar.setName("general information");
-        generalInformationSlotGrammar.addSlot(new Slot("command", false, Arrays.asList("tell me general information about", "tell me something about")));
-        generalInformationSlotGrammar.addSlot(article);
-        generalInformationSlotGrammar.addSlot(modelName);
+                generalInformationSlotGrammar = new GrammarConstraint();
+                generalInformationSlotGrammar.setName("general information grammar");
+                generalInformationSlotGrammar.addSlot(new Slot("command", false, Arrays.asList("tell me general information about", "tell me something about")));
+                generalInformationSlotGrammar.addSlot(article);
+                generalInformationSlotGrammar.addSlot(modelName);
 
-        questionInformationSlotGrammar = new GrammarConstraint();
-        questionInformationSlotGrammar.setName("question information");
-        questionInformationSlotGrammar.addSlot(new Slot("question", false, Arrays.asList("what is the")));
-        questionInformationSlotGrammar.addSlot(new Slot("information type", false, Arrays.asList("name of", "color of",
-                "seat number of", "power of", "maximum speed of", "transmission of", "fuel type of", "maximum fuel consupmtion of", "price of" )));
-        questionInformationSlotGrammar.addSlot(article);
-        questionInformationSlotGrammar.addSlot(modelName);
+                questionInformationSlotGrammar = new GrammarConstraint();
+                questionInformationSlotGrammar.setName("question information grammar");
+                questionInformationSlotGrammar.addSlot(new Slot("question", false, Arrays.asList("what is the")));
+                questionInformationSlotGrammar.addSlot(new Slot("information type", false, Arrays.asList("name of", "color of",
+                        "seat number of", "power of", "maximum speed of", "transmission of", "fuel type of", "maximum fuel consupmtion of", "price of" )));
+                questionInformationSlotGrammar.addSlot(article);
+                questionInformationSlotGrammar.addSlot(modelName);
 
-        additionalConsultationSlotGrammar = new GrammarConstraint();
-        additionalConsultationSlotGrammar.setName("additional consultation");
-        additionalConsultationSlotGrammar.addSlot(new Slot("wanting", false, Arrays.asList("I want to", "I would like to")));
-        additionalConsultationSlotGrammar.addSlot(new Slot("verb", false, Arrays.asList("receive", "do")));
-        additionalConsultationSlotGrammar.addSlot(new Slot("consultation", false, Arrays.asList("an offer", "a phone call", "a test drive")));
+                additionalConsultationSlotGrammar = new GrammarConstraint();
+                additionalConsultationSlotGrammar.setName("additional consultation grammar");
+                additionalConsultationSlotGrammar.addSlot(new Slot("wanting", false, Arrays.asList("I want to", "I would like to")));
+                additionalConsultationSlotGrammar.addSlot(new Slot("verb", false, Arrays.asList("receive", "do")));
+                additionalConsultationSlotGrammar.addSlot(new Slot("consultation", false, Arrays.asList("an offer", "a phone call", "a test drive")));
+            }
+        }.start();
     }
 
     /**
@@ -544,14 +546,19 @@ public class RecognitionService extends Service {
     public void startListening() {
         Log.d(TAG, "start listening");
         this.dialogueStatus = DialogueStatus.START_DIALOGUE;
-        try {
-            recognizer.addGrammarConstraint(yesSlotGrammar);
-            recognizer.addGrammarConstraint(noSlotGrammar);
-            recognizer.startRecognitionMode(recognitionListener);
-        }
-        catch (VoiceException e) {
-            Log.w(TAG, "Exception: ", e);
-        }
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    recognizer.addGrammarConstraint(yesSlotGrammar);
+                    recognizer.addGrammarConstraint(noSlotGrammar);
+                    recognizer.startRecognitionMode(recognitionListener);
+                }
+                catch (VoiceException e) {
+                    Log.w(TAG, "Exception: ", e);
+                }
+            }
+        }.start();
     }
 
     /**
@@ -569,12 +576,14 @@ public class RecognitionService extends Service {
         return false;
     }
 
+
     /**
      * filter the map objects by the given category and add them to the optionsCar arraylist
      * @param cat
      * @return filtered list of cars which represent the options of the customer
      */
     private ArrayList<MapObject> filterMapObjectsByCategory(Category cat) {
+
         ArrayList<MapObject> carObjects = new ArrayList<>();
         for (MapObject obj : MainActivity.cars) {
             if(obj.getCar().getCategory().getName().equals(cat.getName())) {

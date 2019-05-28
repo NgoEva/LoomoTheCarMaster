@@ -1,21 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:layout_margin="@dimen/activity_general_margin"
+    android:orientation="vertical"
     tools:context="com.segway.loomo.MainActivity">
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/textbox_margin"
+        android:layout_weight="0"
+        android:text="@string/welcome"
+        android:textAlignment="center"
+        android:textColor="@color/colorBlack"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/textbox_margin"
+        android:layout_weight="0"
+        android:text="@string/wakeup_info"
+        android:textColor="@color/colorBlack"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/textbox_margin"
+        android:layout_weight="0"
+        android:text="@string/wakeup_words"
+        android:textColor="@color/colorBlack"
+        android:textSize="15sp"
+        android:textStyle="italic" />
 
     <Button
         android:id="@+id/start"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="200px"
-        android:layout_weight="1"
-        android:text="Start" />
+        android:layout_marginTop="@dimen/textbox_margin"
+        android:layout_weight="0"
+        android:background="@color/colorPrimary"
+        android:text="@string/start"
+        android:textColor="@color/colorBlack" />
 
 </LinearLayout>

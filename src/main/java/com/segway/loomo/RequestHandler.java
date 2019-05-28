@@ -13,6 +13,7 @@ import com.android.volley.toolbox.Volley;
 import com.segway.loomo.objects.CarModel;
 import com.segway.loomo.objects.Category;
 import com.segway.loomo.objects.Car;
+import com.segway.loomo.objects.Customer;
 import com.segway.loomo.objects.MapObject;
 import com.segway.loomo.objects.Spot;
 
@@ -22,6 +23,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * class which handles requests to the cms database
+ */
 public class RequestHandler {
     private static String TAG = "RequestHandler";
     private final Context context;
@@ -33,6 +37,10 @@ public class RequestHandler {
     private String body = "{\"populate\":1}";
     private JSONObject jsonRequestBody;
 
+    /**
+     * returns the request handler instance
+     * @return RecognitionService
+     */
     public static RequestHandler getInstance() {
         Log.d(TAG, "get request handler instance");
         if (requestHandler == null) {
@@ -41,6 +49,10 @@ public class RequestHandler {
         return requestHandler;
     }
 
+    /**
+     * constructor to initialize the request handler
+     * @param context
+     */
     public RequestHandler(Context context) {
         Log.d(TAG, "request handler initiated");
         this.context = context;
@@ -48,6 +60,9 @@ public class RequestHandler {
         requestHandler = this;
     }
 
+    /**
+     * initialize the request body
+     */
     public void init() {
         try {
             jsonRequestBody = new JSONObject(this.body);
@@ -57,6 +72,9 @@ public class RequestHandler {
         }
     }
 
+    /**
+     * get the request queue
+     */
     public RequestQueue getRequestQueue() {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
@@ -65,18 +83,30 @@ public class RequestHandler {
         return requestQueue;
     }
 
+    /**
+     * add request to the request queue
+     * @param request
+     */
     public void addToRequestQueue(JsonRequest request) {
         VolleyLog.d("Adding request to queue: %s", request.getUrl());
         request.setTag(TAG);
         getRequestQueue().add(request);
+        requestQueue.start();
     }
 
+    /**
+     * cancel all pending requests
+     */
     public void cancelPendingRequests() {
         if(requestQueue != null) {
             requestQueue.cancelAll(TAG);
         }
     }
 
+    /**
+     * make specific async request defined by the given parameter type to the cms database and save result in global variable
+     * @param type
+     */
     public void makeRequest(final String type) {
         String url = String.format(this.url, type);
 
@@ -125,6 +155,10 @@ public class RequestHandler {
         return carModels;
     }*/
 
+    /**
+     * maps the response JSON object to Category objects and saves them in a global variable
+     * @param response
+     */
     private void mapCategories(JSONObject response) {
         ArrayList<Category> categories = new ArrayList<Category>();
         try {
@@ -142,6 +176,11 @@ public class RequestHandler {
         MainActivity.categories = categories;
     }
 
+    /**
+     * maps the obj JSON object to a Car object and returns it
+     * @param obj
+     * @return
+     */
     private Car mapCar(JSONObject obj) {
         Car car = new Car();
         try {
@@ -173,6 +212,11 @@ public class RequestHandler {
         return car;
     }
 
+    /**
+     * maps the obj JSON object to a Spot object and returns it
+     * @param obj
+     * @return
+     */
     private Spot mapSpot(JSONObject obj) {
         Spot spot = new Spot();
         try {
@@ -188,6 +232,10 @@ public class RequestHandler {
         return spot;
     }
 
+    /**
+     * maps the response JSON object to MapObject objects and saves them in a global variable
+     * @param response
+     */
     private void mapMapObjects(JSONObject response) {
         ArrayList<MapObject> mapObjects = new ArrayList<MapObject>();
         try {
@@ -205,6 +253,40 @@ public class RequestHandler {
         MainActivity.cars = mapObjects;
     }
 
+    /**
+     * save customer c data to the cms database
+     * @param c
+     */
+    /*public void sendCustomerData(Customer c) {
+        String url = "https://loomo.exocreations.de/api/collections/save/customers?token=account-1d02ac9dab107851012a327336009c";
+        String bodyContent = "{\"data\": {\"first_name\": \"" + c.getFirstName() + "\", \"last_name\": \"" + c.getLastName() + "\", \"phone_number\": \"" +
+                c.getPhoneNumber() + "\", \"interest\": \"" + c.getInterest() + "\"}}";
+
+        try {
+            JSONObject body = new JSONObject(bodyContent);
+            JsonObjectRequest request = new JsonObjectRequest(url, body, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d(TAG, response.toString());
+
+            }
+
+        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //This code is executed if there is an error.
+            }
+        });
+        addToRequestQueue(request);
+        }
+        catch(JSONException e) {
+            Log.w( null, "Exception: ", e);
+        }
+    }*/
+
+    /**
+     * class which defines the possible request types
+     */
     public class Collection {
         //public static final String CAR_MODELS = "carModels";
         public static final String CATEGORIES = "categories";

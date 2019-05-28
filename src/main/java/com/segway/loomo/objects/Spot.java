@@ -1,5 +1,8 @@
 package com.segway.loomo.objects;
 
+/**
+ * class which represents an exhibition spot in the car showroom, it has a x- and a y-coordinate
+ */
 public class Spot extends AppObject {
     private float x_coordinate;
     private float y_coordinate;
