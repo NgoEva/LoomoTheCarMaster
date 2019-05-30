@@ -68,8 +68,8 @@ public class RecognitionService extends Service {
     public RecognitionService(Context context) {
         Log.d(TAG, "recognition service initiated");
         this.context = context;
-        init();
-        initListeners();
+        this.init();
+        this.initListeners();
         instance = this;
     }
 
@@ -78,8 +78,8 @@ public class RecognitionService extends Service {
      */
     @Override
     public void init() {
-        recognizer = Recognizer.getInstance();
-        recognizer.bindService(this.context, new ServiceBinder.BindStateListener() {
+        this.recognizer = Recognizer.getInstance();
+        this.recognizer.bindService(this.context, new ServiceBinder.BindStateListener() {
             @Override
             public void onBind() {
                 Log.d(TAG, "recognizer service bound successfully");
@@ -99,7 +99,7 @@ public class RecognitionService extends Service {
     @Override
     public void initListeners(){
 
-        recognitionListener = new RecognitionListener() {
+        this.recognitionListener = new RecognitionListener() {
             @Override
             public void onRecognitionStart() {
                 Log.i(TAG, "recognition started");
@@ -482,62 +482,56 @@ public class RecognitionService extends Service {
      */
     private void initControlGrammar() {
         Log.d(TAG, "init control grammar");
+        Slot interest = new Slot( "interest ", false, Arrays.asList("show me", "I would like to see", "take me", "guide me", "can you show me",
+                "I want to see", "I am interested in"));
+        Slot preposition = new Slot("preposition", true, Arrays.asList("to"));
+        Slot article = new Slot("article", true, Arrays.asList("the", "this", "that", "a"));
+        Slot modelName = new Slot("model name", false, Arrays.asList("car", "model", "A class", "B class", "C class", "CLA", "CLS", "S class",
+                "E class", "G class", "GLA", "GLC","GLE","V class"));
 
-        new Thread() {
-            @Override
-            public void run() {
-                Slot interest = new Slot( "interest ", false, Arrays.asList("show me", "I would like to see", "take me", "guide me", "can you show me",
-                        "I want to see", "I am interested in"));
-                Slot preposition = new Slot("preposition", true, Arrays.asList("to"));
-                Slot article = new Slot("article", true, Arrays.asList("the", "this", "that", "a"));
-                Slot modelName = new Slot("model name", false, Arrays.asList("car", "model", "A class", "B class", "C class", "CLA", "CLS", "S class",
-                        "E class", "G class", "GLA", "GLC","GLE","V class"));
+        this.yesCommandList = Arrays.asList("yes", "yeah", "sure", "of course", "yes please");
+        this.noCommandList = Arrays.asList("no", "nah", "nope", "no thanks");
 
-                yesCommandList = Arrays.asList("yes", "yeah", "sure", "of course", "yes please");
-                noCommandList = Arrays.asList("no", "nah", "nope", "no thanks");
+        this.yesSlotGrammar = new GrammarConstraint();
+        this.yesSlotGrammar.setName("yes grammar");
+        this.yesSlotGrammar.addSlot(new Slot("answer positive", false, this.yesCommandList));
 
-                yesSlotGrammar = new GrammarConstraint();
-                yesSlotGrammar.setName("yes grammar");
-                yesSlotGrammar.addSlot(new Slot("answer positive", false, yesCommandList));
+        this.noSlotGrammar = new GrammarConstraint();
+        this.noSlotGrammar.setName("no grammar");
+        this.noSlotGrammar.addSlot(new Slot("answer negative", false, this.noCommandList));
 
-                noSlotGrammar = new GrammarConstraint();
-                noSlotGrammar.setName("no grammar");
-                noSlotGrammar.addSlot(new Slot("answer negative", false, noCommandList));
+        this.categorySlotGrammar = new GrammarConstraint();
+        this.categorySlotGrammar.setName("category grammar");
+        this.categorySlotGrammar.addSlot(interest);
+        this.categorySlotGrammar.addSlot(article);
+        this.categorySlotGrammar.addSlot(new Slot("category", false, Arrays.asList("hatchback", "coupe", "saloon", "cabriolet", "SUV", "MPV" )));
 
-                categorySlotGrammar = new GrammarConstraint();
-                categorySlotGrammar.setName("category grammar");
-                categorySlotGrammar.addSlot(interest);
-                categorySlotGrammar.addSlot(article);
-                categorySlotGrammar.addSlot(new Slot("category", false, Arrays.asList("hatchback", "coupe", "saloon", "cabriolet", "SUV", "MPV" )));
+        this.modelSlotGrammar = new GrammarConstraint();
+        this.modelSlotGrammar.setName("model grammar");
+        this.modelSlotGrammar.addSlot(interest);
+        this.modelSlotGrammar.addSlot(preposition);
+        this.modelSlotGrammar.addSlot(article);
+        this.modelSlotGrammar.addSlot(modelName);
 
-                modelSlotGrammar = new GrammarConstraint();
-                modelSlotGrammar.setName("model grammar");
-                modelSlotGrammar.addSlot(interest);
-                modelSlotGrammar.addSlot(preposition);
-                modelSlotGrammar.addSlot(article);
-                modelSlotGrammar.addSlot(modelName);
+        this.generalInformationSlotGrammar = new GrammarConstraint();
+        this.generalInformationSlotGrammar.setName("general information grammar");
+        this.generalInformationSlotGrammar.addSlot(new Slot("command", false, Arrays.asList("tell me general information about", "tell me something about")));
+        this.generalInformationSlotGrammar.addSlot(article);
+        this.generalInformationSlotGrammar.addSlot(modelName);
 
-                generalInformationSlotGrammar = new GrammarConstraint();
-                generalInformationSlotGrammar.setName("general information grammar");
-                generalInformationSlotGrammar.addSlot(new Slot("command", false, Arrays.asList("tell me general information about", "tell me something about")));
-                generalInformationSlotGrammar.addSlot(article);
-                generalInformationSlotGrammar.addSlot(modelName);
+        this.questionInformationSlotGrammar = new GrammarConstraint();
+        this.questionInformationSlotGrammar.setName("question information grammar");
+        this.questionInformationSlotGrammar.addSlot(new Slot("question", false, Arrays.asList("what is the")));
+        this.questionInformationSlotGrammar.addSlot(new Slot("information type", false, Arrays.asList("name of", "color of",
+                "seat number of", "power of", "maximum speed of", "transmission of", "fuel type of", "maximum fuel consupmtion of", "price of" )));
+        this.questionInformationSlotGrammar.addSlot(article);
+        this.questionInformationSlotGrammar.addSlot(modelName);
 
-                questionInformationSlotGrammar = new GrammarConstraint();
-                questionInformationSlotGrammar.setName("question information grammar");
-                questionInformationSlotGrammar.addSlot(new Slot("question", false, Arrays.asList("what is the")));
-                questionInformationSlotGrammar.addSlot(new Slot("information type", false, Arrays.asList("name of", "color of",
-                        "seat number of", "power of", "maximum speed of", "transmission of", "fuel type of", "maximum fuel consupmtion of", "price of" )));
-                questionInformationSlotGrammar.addSlot(article);
-                questionInformationSlotGrammar.addSlot(modelName);
-
-                additionalConsultationSlotGrammar = new GrammarConstraint();
-                additionalConsultationSlotGrammar.setName("additional consultation grammar");
-                additionalConsultationSlotGrammar.addSlot(new Slot("wanting", false, Arrays.asList("I want to", "I would like to")));
-                additionalConsultationSlotGrammar.addSlot(new Slot("verb", false, Arrays.asList("receive", "do")));
-                additionalConsultationSlotGrammar.addSlot(new Slot("consultation", false, Arrays.asList("an offer", "a phone call", "a test drive")));
-            }
-        }.start();
+        this.additionalConsultationSlotGrammar = new GrammarConstraint();
+        this.additionalConsultationSlotGrammar.setName("additional consultation grammar");
+        this.additionalConsultationSlotGrammar.addSlot(new Slot("wanting", false, Arrays.asList("I want to", "I would like to")));
+        this.additionalConsultationSlotGrammar.addSlot(new Slot("verb", false, Arrays.asList("receive", "do")));
+        this.additionalConsultationSlotGrammar.addSlot(new Slot("consultation", false, Arrays.asList("an offer", "a phone call", "a test drive")));
     }
 
     /**
@@ -546,19 +540,14 @@ public class RecognitionService extends Service {
     public void startListening() {
         Log.d(TAG, "start listening");
         this.dialogueStatus = DialogueStatus.START_DIALOGUE;
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    recognizer.addGrammarConstraint(yesSlotGrammar);
-                    recognizer.addGrammarConstraint(noSlotGrammar);
-                    recognizer.startRecognitionMode(recognitionListener);
-                }
-                catch (VoiceException e) {
-                    Log.w(TAG, "Exception: ", e);
-                }
-            }
-        }.start();
+        try {
+            this.recognizer.addGrammarConstraint(this.yesSlotGrammar);
+            this.recognizer.addGrammarConstraint(this.noSlotGrammar);
+            this.recognizer.startRecognitionMode(this.recognitionListener);
+        }
+        catch (VoiceException e) {
+            Log.w(TAG, "Exception: ", e);
+        }
     }
 
     /**
@@ -629,9 +618,9 @@ public class RecognitionService extends Service {
      */
     public void stopListening() {
         Log.d(TAG, "stop listening");
-        dialogueStatus = "";
+        this.dialogueStatus = "";
         try {
-            recognizer.stopRecognition();
+            this.recognizer.stopRecognition();
         } catch (VoiceException e) {
             Log.e(TAG, "got VoiceException", e);
         }
@@ -642,7 +631,7 @@ public class RecognitionService extends Service {
      */
     public void disconnect() {
         Log.d(TAG, "unbind recognizer service");
-        recognizer.unbindService();
+        this.recognizer.unbindService();
     }
 
     /**

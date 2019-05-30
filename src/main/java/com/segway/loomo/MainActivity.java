@@ -51,10 +51,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void initButtons() {
         Log.d(TAG, "init buttons");
-        start = (Button) findViewById(R.id.start);
-        start.setOnClickListener(this);
-        /*send = (Button) findViewById(R.id.send);
-        send.setOnClickListener(this);*/
+        this.start = (Button) findViewById(R.id.start);
+        this.start.setOnClickListener(this);
+        /*this.send = (Button) findViewById(R.id.send);
+        this.send.setOnClickListener(this);*/
     }
 
     protected void onDestroy() {
@@ -71,10 +71,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.start:
                 Log.d(TAG, "start-button clicked");
-                start.setEnabled(false);
+                this.start.setEnabled(false);
                 this.getData();
-                speakService.speak("Hello, I am Loomo, the Car Master. Do you want to know something about our cars?");
-                recognitionService.startListening();
+                this.speakService.speak("Hello, I am Loomo, the Car Master. Do you want to know something about our cars?");
+                this.recognitionService.startListening();
                 break;
             /*case R.id.send:
                 Log.d(TAG, "send-button clicked");
@@ -99,10 +99,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public void run() {
                 // get categories from database
-                RequestHandler.getInstance().makeRequest(RequestHandler.Collection.CATEGORIES);
+                requestHandler.makeRequest(RequestHandler.Collection.CATEGORIES);
 
                 // get map objects from database which include the car and its respective spot
-                RequestHandler.getInstance().makeRequest(RequestHandler.Collection.SHOWROOM_MAP);
+                requestHandler.makeRequest(RequestHandler.Collection.SHOWROOM_MAP);
+
             }
         }.start();
     }

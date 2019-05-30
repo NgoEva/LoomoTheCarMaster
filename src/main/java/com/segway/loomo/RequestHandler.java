@@ -10,18 +10,11 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.Volley;
-import com.segway.loomo.objects.CarModel;
-import com.segway.loomo.objects.Category;
-import com.segway.loomo.objects.Car;
-import com.segway.loomo.objects.Customer;
-import com.segway.loomo.objects.MapObject;
-import com.segway.loomo.objects.Spot;
+import com.segway.loomo.services.DataMapper;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 
 /**
  * class which handles requests to the cms database
@@ -56,7 +49,7 @@ public class RequestHandler {
     public RequestHandler(Context context) {
         Log.d(TAG, "request handler initiated");
         this.context = context;
-        init();
+        this.init();
         requestHandler = this;
     }
 
@@ -65,7 +58,7 @@ public class RequestHandler {
      */
     public void init() {
         try {
-            jsonRequestBody = new JSONObject(this.body);
+            this.jsonRequestBody = new JSONObject(this.body);
         }
         catch(JSONException e) {
             Log.w( null, "Exception: ", e);
@@ -90,7 +83,7 @@ public class RequestHandler {
     public void addToRequestQueue(JsonRequest request) {
         VolleyLog.d("Adding request to queue: %s", request.getUrl());
         request.setTag(TAG);
-        getRequestQueue().add(request);
+        this.getRequestQueue().add(request);
         requestQueue.start();
     }
 
@@ -120,11 +113,11 @@ public class RequestHandler {
                 }*/
                 if(type == Collection.CATEGORIES) {
                     Log.d(TAG, "got response for categories");
-                    mapCategories(response);
+                    DataMapper.mapCategories(response);
                 }
                 else if(type == Collection.SHOWROOM_MAP) {
                     Log.d(TAG, "got response for showroom map");
-                    mapMapObjects(response);
+                    DataMapper.mapMapObjects(response);
                 }
             }
 
@@ -134,123 +127,7 @@ public class RequestHandler {
                 //This code is executed if there is an error.
             }
         });
-        addToRequestQueue(request);
-    }
-
-   /* private ArrayList<CarModel> mapCarModels(JSONObject response) {
-        ArrayList<CarModel> carModels = new ArrayList<CarModel>();
-        try {
-            JSONArray objects = response.getJSONArray("entries");
-            for(int i = 0; i < objects.length(); i++) {
-                JSONObject obj = objects.getJSONObject(i);
-                CarModel model = new CarModel(obj.getString("name"));
-                model.setId(obj.getString("_id"));
-                carModels.add(model);
-            }
-        }
-        catch(JSONException e) {
-            Log.d( TAG, "Exception: ", e);
-        }
-
-        return carModels;
-    }*/
-
-    /**
-     * maps the response JSON object to Category objects and saves them in a global variable
-     * @param response
-     */
-    private void mapCategories(JSONObject response) {
-        ArrayList<Category> categories = new ArrayList<Category>();
-        try {
-            JSONArray objects = response.getJSONArray("entries");
-            for(int i = 0; i < objects.length(); i++) {
-                JSONObject obj = objects.getJSONObject(i);
-                Category category = new Category(obj.getString("name"));
-                category.setId(obj.getString("_id"));
-                categories.add(category);
-            }
-        }
-        catch(JSONException e) {
-            Log.d( TAG, "Exception: ", e);
-        }
-        MainActivity.categories = categories;
-    }
-
-    /**
-     * maps the obj JSON object to a Car object and returns it
-     * @param obj
-     * @return
-     */
-    private Car mapCar(JSONObject obj) {
-        Car car = new Car();
-        try {
-            JSONObject carObject = obj.getJSONObject("car");
-            car.setId(carObject.getString("_id"));
-
-            Category category = new Category(carObject.getJSONObject("category").getString("name"));
-            category.setId(carObject.getJSONObject("category").getString("_id"));
-
-            CarModel carModel = new CarModel(carObject.getJSONObject("car_model").getString("name"));
-            carModel.setId(carObject.getJSONObject("car_model").getString("_id"));
-
-            car.setCategory(category);
-            car.setCarModel(carModel);
-
-            car.setName(carObject.getString("name"));
-            car.setColor(carObject.getString("color"));
-            car.setSeatNumber(carObject.getInt("seat_number"));
-            car.setPower(carObject.getInt("power"));
-            car.setMaxSpeed(carObject.getInt("max_speed"));
-            car.setTransmission(carObject.getString("transmission"));
-            car.setFuelType(carObject.getString("fuel_type"));
-            car.setMaxFuelConsumption(carObject.getDouble("max_fuel_consumption"));
-            car.setPrice(carObject.getInt("price"));
-        }
-        catch(JSONException e) {
-            Log.d( TAG, "Exception: ", e);
-        }
-        return car;
-    }
-
-    /**
-     * maps the obj JSON object to a Spot object and returns it
-     * @param obj
-     * @return
-     */
-    private Spot mapSpot(JSONObject obj) {
-        Spot spot = new Spot();
-        try {
-            JSONObject spotObject = obj.getJSONObject("spot");
-            spot.setId(spotObject.getString("_id"));
-            spot.setX_coordinate(spotObject.getDouble("x_coordinate"));
-            spot.setY_coordinate(spotObject.getDouble("y_coordinate"));
-
-        }
-        catch(JSONException e) {
-            Log.d( TAG, "Exception: ", e);
-        }
-        return spot;
-    }
-
-    /**
-     * maps the response JSON object to MapObject objects and saves them in a global variable
-     * @param response
-     */
-    private void mapMapObjects(JSONObject response) {
-        ArrayList<MapObject> mapObjects = new ArrayList<MapObject>();
-        try {
-            JSONArray objects = response.getJSONArray("entries");
-            for (int i = 0; i < objects.length(); i++) {
-                JSONObject obj = objects.getJSONObject(i);
-                MapObject mapObject = new MapObject();
-                mapObject.setCar(mapCar(obj));
-                mapObject.setSpot(mapSpot(obj));
-                mapObjects.add(mapObject);
-            }
-        } catch(JSONException e) {
-            Log.d( TAG, "Exception: ", e);
-        }
-        MainActivity.cars = mapObjects;
+        this.addToRequestQueue(request);
     }
 
     /**
@@ -277,7 +154,7 @@ public class RequestHandler {
                 //This code is executed if there is an error.
             }
         });
-        addToRequestQueue(request);
+        this.addToRequestQueue(request);
         }
         catch(JSONException e) {
             Log.w( null, "Exception: ", e);

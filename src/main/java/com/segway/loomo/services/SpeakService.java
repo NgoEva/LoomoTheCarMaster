@@ -30,15 +30,15 @@ public class SpeakService extends Service {
     public SpeakService(Context context) {
         Log.d(TAG, "speaker service initiated");
         this.context = context;
-        init();
-        initListeners();
+        this.init();
+        this.initListeners();
         instance = this;
     }
 
     @Override
     public void init() {
-        speaker = Speaker.getInstance();
-        speaker.bindService(context, new ServiceBinder.BindStateListener() {
+        this.speaker = Speaker.getInstance();
+        this.speaker.bindService(this.context, new ServiceBinder.BindStateListener() {
             @Override
             public void onBind() {
                 Log.d(TAG, "speaker service bound successfully");
@@ -58,7 +58,7 @@ public class SpeakService extends Service {
     }
 
     public void initListeners() {
-        ttsListener = new TtsListener() {
+        this.ttsListener = new TtsListener() {
             @Override
             public void onSpeechStarted(String s) {
                 //s is speech content, callback this method when speech is starting.
@@ -81,8 +81,8 @@ public class SpeakService extends Service {
 
     public void speak(String text) {
         try {
-            speaker.speak(text, ttsListener);
-            boolean timeout = speaker.waitForSpeakFinish(5000);
+            this.speaker.speak(text, this.ttsListener);
+            boolean timeout = this.speaker.waitForSpeakFinish(5000);
         }
         catch(VoiceException e) {
             e.printStackTrace();
@@ -91,6 +91,6 @@ public class SpeakService extends Service {
 
     public void disconnect() {
         Log.d(TAG, "unbind speaker service");
-        speaker.unbindService();
+        this.speaker.unbindService();
     }
 }
