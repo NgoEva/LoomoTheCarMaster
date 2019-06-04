@@ -15,6 +15,7 @@ import com.segway.loomo.services.SpeakService;
 
 import java.util.ArrayList;
 
+
 public class MainActivity extends Activity implements View.OnClickListener {
     private static String TAG = "MainActivity";
 
@@ -39,6 +40,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         this.initServices();
         this.initButtons();
+
+        sendMail();
     }
 
     private void initServices(){
@@ -68,7 +71,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+
+
+        sendMail();
         switch (view.getId()) {
+
+
             case R.id.start:
                 Log.d(TAG, "start-button clicked");
                 this.start.setEnabled(false);
@@ -106,5 +114,26 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
             }
         }.start();
+    }
+
+    private void sendMail(){
+        Log.d(TAG, "starting mail method");
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    GMailSender sender = new GMailSender("loomo.email@gmail.com",
+                            "loomo@MBC");
+                    sender.sendMail("Hello from JavaMail", "Body from JavaMail",
+                            "loomo.email@gmail.com", "thomas.lehenberger@gmail.com");
+                } catch (Exception e) {
+                    Log.e("SendMail", e.getMessage(), e);
+                }
+            }
+
+        }).start();
+
+
     }
 }
