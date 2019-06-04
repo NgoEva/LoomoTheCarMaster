@@ -48,6 +48,6 @@
         android:layout_weight="0"
         android:background="@color/colorPrimary"
         android:text="@string/start"
-        android:textColor="@color/colorBlack" />
+        android:textColor="@color/colorWhite" />
 
 </LinearLayout>
