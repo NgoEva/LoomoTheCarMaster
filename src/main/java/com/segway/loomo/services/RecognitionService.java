@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class RecognitionService extends Service {
     private static final String TAG = "RecognitionService";
-    private final Context context;
+    private Context context;
 
     private Recognizer recognizer;
     private static RecognitionService instance;
@@ -83,7 +83,7 @@ public class RecognitionService extends Service {
             @Override
             public void onBind() {
                 Log.d(TAG, "recognizer service bound successfully");
-                initControlGrammar();
+                RecognitionService.getInstance().initControlGrammar();
             }
 
             @Override
@@ -131,7 +131,7 @@ public class RecognitionService extends Service {
                             SpeakService.getInstance().speak(cat.getName());
                         }
                         dialogueStatus = DialogueStatus.CUSTOMER_INTERESTED;
-                        startRecognition();
+                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
 
@@ -143,7 +143,7 @@ public class RecognitionService extends Service {
                         } catch (VoiceException e) {
                             Log.e(TAG, "Exception: ", e);
                         }
-                        stopListening();
+                        RecognitionService.getInstance().stopListening();
                         SpeakService.getInstance().speak("Alright. Thank you and have a nice day!");
                         return false;
                     }
@@ -164,10 +164,10 @@ public class RecognitionService extends Service {
                                 categoryFound = true;
 
                                 // filter map objects by selected category to have the car options for the customer
-                                carOptions = filterMapObjectsByCategory(cat);
+                                carOptions = RecognitionService.getInstance().filterMapObjectsByCategory(cat);
 
                                 // get the available car models of the car options
-                                carModelOptions = getCarModelsOfCarOptions();
+                                carModelOptions = RecognitionService.getInstance().getCarModelsOfCarOptions();
 
                                 recognizer.removeGrammarConstraint(categorySlotGrammar);
                                 recognizer.addGrammarConstraint(modelSlotGrammar);
@@ -181,7 +181,7 @@ public class RecognitionService extends Service {
                                 SpeakService.getInstance().speak(model.getName());
                             }
                             dialogueStatus = DialogueStatus.CATEGORY_SELECTED;
-                            startRecognition();
+                            RecognitionService.getInstance().startRecognition();
                             return true;
                         }
                     }
@@ -257,7 +257,7 @@ public class RecognitionService extends Service {
                                 " and it has a maximum fuel consumption of " + selectedMapObject.getCar().getMaxFuelConsumption() + " litres per 100 kilometres. " +
                                 "With the described equipment this car costs " + selectedMapObject.getCar().getPrice() + " euros. Do you want to see another car?");
                         dialogueStatus = DialogueStatus.NEXT_CAR;
-                        startRecognition();
+                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
 
@@ -310,7 +310,7 @@ public class RecognitionService extends Service {
                         }
                         SpeakService.getInstance().speak("Is there something else you want to know?");
                         dialogueStatus = DialogueStatus.MORE_INFORMATION;
-                        startRecognition();
+                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
                     return true;
@@ -328,7 +328,7 @@ public class RecognitionService extends Service {
                             Log.e(TAG, "Exception: ", e);
                         }
                         dialogueStatus = DialogueStatus.NEXT_CAR;
-                        startRecognition();
+                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
 
@@ -344,7 +344,7 @@ public class RecognitionService extends Service {
                         }
                         SpeakService.getInstance().speak("Okay, ask me another question.");
                         dialogueStatus = DialogueStatus.MODEL_SELECTED;
-                        startRecognition();
+                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
                     return true;
@@ -362,7 +362,7 @@ public class RecognitionService extends Service {
                         }
                         SpeakService.getInstance().speak("Alright. If you have more questions, you could talk to a human salesman now. Should I call someone?");
                         dialogueStatus = DialogueStatus.CALL_SALESMAN;
-                        startRecognition();
+                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
 
@@ -384,7 +384,7 @@ public class RecognitionService extends Service {
                             SpeakService.getInstance().speak(cat.getName());
                         }
                         dialogueStatus = DialogueStatus.CUSTOMER_INTERESTED;
-                        startRecognition();
+                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
                     return true;
@@ -405,7 +405,7 @@ public class RecognitionService extends Service {
                         SpeakService.getInstance().speak("Alright, Do you want to get additional consultation? We could offer you a phone call," +
                                         " an appointment for a test drive or a sales offer.");
                         dialogueStatus = DialogueStatus.ADDITIONAL_CONSULTATION;
-                        startRecognition();
+                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
 
@@ -417,7 +417,7 @@ public class RecognitionService extends Service {
                         } catch (VoiceException e) {
                             Log.e(TAG, "Exception: ", e);
                         }
-                        stopListening();
+                        RecognitionService.getInstance().stopListening();
                         SpeakService.getInstance().speak("Okay, I will call a salesman. Please wait here, it will only take some minutes.");
                         //cms hook --> request url to trigger a web hook
                         return false;
@@ -437,7 +437,7 @@ public class RecognitionService extends Service {
                         } catch (VoiceException e) {
                             Log.e(TAG, "Exception: ", e);
                         }
-                        stopListening();
+                        RecognitionService.getInstance().stopListening();
                         SpeakService.getInstance().speak("Okay. Thank you! See you next time!");
                         return false;
                     }
@@ -466,7 +466,7 @@ public class RecognitionService extends Service {
                         SpeakService.getInstance().speak("We need to collect some information from you to make an appointment or" +
                                 "to send you an offer. Are you okay with that?");
                         dialogueStatus = DialogueStatus.CONTACT_INFORMATION;
-                        startRecognition();
+                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
                     return true;
@@ -491,7 +491,7 @@ public class RecognitionService extends Service {
                         } catch (VoiceException e) {
                             Log.e(TAG, "Exception: ", e);
                         }
-                        stopListening();
+                        RecognitionService.getInstance().stopListening();
                         return false;
                     }
                     return true;
