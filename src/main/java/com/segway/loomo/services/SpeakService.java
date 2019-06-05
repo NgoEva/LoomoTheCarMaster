@@ -12,7 +12,7 @@ import com.segway.robot.sdk.voice.tts.TtsListener;
 public class SpeakService extends Service {
 
     private static final String TAG = "SpeakService";
-    private final Context context;
+    private Context context;
 
     private Speaker speaker;
     private static SpeakService instance;
@@ -82,7 +82,9 @@ public class SpeakService extends Service {
     public void speak(String text) {
         try {
             this.speaker.speak(text, this.ttsListener);
-            boolean timeout = this.speaker.waitForSpeakFinish(5000);
+            Log.d(TAG, "before speak ");
+            this.speaker.waitForSpeakFinish(10000);
+            Log.d(TAG, "after speak ");
         }
         catch(VoiceException e) {
             e.printStackTrace();

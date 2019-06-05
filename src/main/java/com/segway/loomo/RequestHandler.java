@@ -21,7 +21,7 @@ import org.json.JSONObject;
  */
 public class RequestHandler {
     private static String TAG = "RequestHandler";
-    private final Context context;
+    private Context context;
 
     private static RequestQueue requestQueue;
     private static RequestHandler requestHandler;

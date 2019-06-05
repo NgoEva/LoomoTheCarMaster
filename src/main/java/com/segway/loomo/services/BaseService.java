@@ -16,7 +16,7 @@ import com.segway.robot.sdk.locomotion.sbv.StartVLSListener;
 
 public class BaseService extends Service {
     private static final String TAG = "BaseService";
-    private final Context context;
+    private Context context;
 
     private Base base;
     private static BaseService instance;
@@ -78,6 +78,7 @@ public class BaseService extends Service {
             public void onCheckPointArrived(CheckPoint checkPoint, final Pose2D realPose, boolean isLast) {
                 Log.i(TAG, "Arrived to checkpoint: " + checkPoint);
                 SpeakService.getInstance().speak("Okay, here we are. I can start with general information about the car or you can ask me a particular question.");
+                RecognitionService.getInstance().startRecognition();
             }
 
             @Override
@@ -120,8 +121,19 @@ public class BaseService extends Service {
 
     private void setupNavigationVLS() {
         if (!this.base.isVLSStarted()) {
-            this.base.startVLS(true, true, this.startVlsListener);
+            Log.d(TAG, "starting VLS");
+
+            base.startVLS(true, true, this.startVlsListener);
             this.base.setOnCheckPointArrivedListener(this.checkpointListener);
+            // Wait for VLS listener to finish, otherwise our moves will throw exceptions
+            try {
+                while (!base.isVLSStarted()) {
+                    Log.d(TAG, "Waiting for VLS to get ready...");
+                    Thread.sleep(100);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             // setting up Obstacle Avoidance
             Log.d(TAG, "Obstacle Avoidance is enabled:  " + this.base.isUltrasonicObstacleAvoidanceEnabled() +
