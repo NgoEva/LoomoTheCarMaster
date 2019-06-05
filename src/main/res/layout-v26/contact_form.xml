@@ -8,13 +8,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="@dimen/activity_general_margin"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/textbox_margin"
+            android:layout_marginBottom="@dimen/activity_general_margin"
             android:text="@string/contact_form"
             android:textAlignment="center"
             android:textSize="30sp" />
@@ -39,10 +40,11 @@
                     android:id="@+id/editText3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:autofillHints=""
                     android:ems="10"
+                    android:hint="@string/first_name"
                     android:inputType="textPersonName"
-                    android:text="@string/first_name"
-                    android:autofillHints="" />
+                    android:text="@string/first_name" />
 
                 <TextView
                     android:id="@+id/textView10"
@@ -55,6 +57,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
+                    android:hint="@string/e_mail"
+                    android:importantForAutofill="no"
                     android:inputType="textPersonName"
                     android:text="@string/e_mail" />
 
@@ -69,6 +73,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
+                    android:hint="@string/house_number"
+                    android:importantForAutofill="no"
                     android:inputType="textPersonName"
                     android:text="@string/house_number" />
 
@@ -83,6 +89,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
+                    android:hint="@string/zip_code"
+                    android:importantForAutofill="no"
                     android:inputType="textPersonName"
                     android:text="@string/zip_code" />
 
@@ -104,9 +112,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
+                    android:hint="@string/last_name"
+                    android:importantForAutofill="no"
                     android:inputType="textPersonName"
-                    android:text="@string/last_name"
-                    android:importantForAutofill="no" />
+                    android:text="@string/last_name" />
 
                 <TextView
                     android:id="@+id/textView11"
@@ -119,6 +128,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
+                    android:hint="@string/address"
+                    android:importantForAutofill="no"
                     android:inputType="textPersonName"
                     android:text="@string/address" />
 
@@ -133,8 +144,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
+                    android:hint="@string/phone_number"
+                    android:importantForAutofill="no"
                     android:inputType="textPersonName"
                     android:text="@string/phone_number" />
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/city" />
+
+                <EditText
+                    android:id="@+id/editText2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/city"
+                    android:importantForAutofill="no"
+                    android:inputType="textPersonName"
+                    android:text="@string/city" />
 
             </LinearLayout>
 
@@ -144,8 +173,11 @@
             android:id="@+id/button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_general_margin"
+            android:background="@color/colorPrimary"
             android:text="@string/send"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textColor="@color/colorWhite" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

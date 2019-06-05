@@ -83,7 +83,7 @@ public class SpeakService extends Service {
         try {
             this.speaker.speak(text, this.ttsListener);
             Log.d(TAG, "before speak ");
-            this.speaker.waitForSpeakFinish(10000);
+            this.speaker.waitForSpeakFinish(5000);
             Log.d(TAG, "after speak ");
         }
         catch(VoiceException e) {

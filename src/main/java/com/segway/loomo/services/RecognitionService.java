@@ -117,21 +117,18 @@ public class RecognitionService extends Service {
                     if (isCommand(result, yesCommandList)) {
                         Log.d(TAG, "customer is interested");
                         try {
-                            recognizer.stopRecognition();
                             recognizer.removeGrammarConstraint(yesSlotGrammar);
                             recognizer.removeGrammarConstraint(noSlotGrammar);
                             recognizer.addGrammarConstraint(categorySlotGrammar);
                         } catch (VoiceException e) {
                             Log.e(TAG, "Exception: ", e);
                         }
-                        SpeakService.getInstance().speak("What category are you interested in?");
 
-                        // tell customer each available category
-                        for (Category cat : MainActivity.categories) {
-                            SpeakService.getInstance().speak(cat.getName());
-                        }
+                        //prepare sentence to tell customer the available categories
+                        String categoryQuestion = buildCategoryString();
+                        SpeakService.getInstance().speak(categoryQuestion);
+
                         dialogueStatus = DialogueStatus.CUSTOMER_INTERESTED;
-                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
 
@@ -159,8 +156,6 @@ public class RecognitionService extends Service {
                         if (result.toLowerCase().contains(cat.getName().toLowerCase())) {
                             Log.d(TAG, cat.getName() + " is selected");
                             try {
-                                recognizer.stopRecognition();
-
                                 categoryFound = true;
 
                                 // filter map objects by selected category to have the car options for the customer
@@ -174,14 +169,12 @@ public class RecognitionService extends Service {
                             } catch (VoiceException e) {
                                 Log.e(TAG, "Exception: ", e);
                             }
-                            SpeakService.getInstance().speak("Alright. Please tell me which model I should show you. Available models for this category are: ");
 
-                            // tell customer each available car model for the selected category
-                            for (CarModel model : carModelOptions) {
-                                SpeakService.getInstance().speak(model.getName());
-                            }
+                            //prepare sentence to tell customer the available car models
+                            String modelQuestion = buildModelString();
+                            SpeakService.getInstance().speak(modelQuestion);
+
                             dialogueStatus = DialogueStatus.CATEGORY_SELECTED;
-                            RecognitionService.getInstance().startRecognition();
                             return true;
                         }
                     }
@@ -203,8 +196,6 @@ public class RecognitionService extends Service {
                         if (result.toLowerCase().contains(model.getName().toLowerCase())) {
                             Log.d(TAG, model.getName() + " is selected");
                             try {
-                                recognizer.stopRecognition();
-
                                 modelFound = true;
 
                                 /*filterMapObjectsByCarModel(model);*/
@@ -242,7 +233,6 @@ public class RecognitionService extends Service {
                     if (result.contains("general information") || result.contains("something about")) {
                         Log.d(TAG, "customer selected general information");
                         try {
-                            recognizer.stopRecognition();
                             recognizer.removeGrammarConstraint(generalInformationSlotGrammar);
                             recognizer.removeGrammarConstraint(questionInformationSlotGrammar);
                             recognizer.addGrammarConstraint(yesSlotGrammar);
@@ -257,14 +247,12 @@ public class RecognitionService extends Service {
                                 " and it has a maximum fuel consumption of " + selectedMapObject.getCar().getMaxFuelConsumption() + " litres per 100 kilometres. " +
                                 "With the described equipment this car costs " + selectedMapObject.getCar().getPrice() + " euros. Do you want to see another car?");
                         dialogueStatus = DialogueStatus.NEXT_CAR;
-                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
 
                     else if (result.contains("name") || result.contains("color") || result.contains("seat number") || result.contains("power") || result.contains("speed") ||
                             result.contains("transmission") || result.contains("fuel type") || result.contains("fuel consumption") || result.contains("price")) {
                         try {
-                            recognizer.stopRecognition();
                             recognizer.removeGrammarConstraint(questionInformationSlotGrammar);
                             recognizer.addGrammarConstraint(yesSlotGrammar);
                             recognizer.addGrammarConstraint(noSlotGrammar);
@@ -310,7 +298,6 @@ public class RecognitionService extends Service {
                         }
                         SpeakService.getInstance().speak("Is there something else you want to know?");
                         dialogueStatus = DialogueStatus.MORE_INFORMATION;
-                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
                     return true;
@@ -321,21 +308,14 @@ public class RecognitionService extends Service {
 
                     if (isCommand(result, noCommandList)) {
                         Log.d(TAG, "customer does not want to receive more information");
-                        try {
-                            recognizer.stopRecognition();
-                            SpeakService.getInstance().speak("Alright. Do you want to see another car?");
-                        } catch (VoiceException e) {
-                            Log.e(TAG, "Exception: ", e);
-                        }
+                        SpeakService.getInstance().speak("Alright. Do you want to see another car?");
                         dialogueStatus = DialogueStatus.NEXT_CAR;
-                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
 
                     else if (isCommand(result, yesCommandList)) {
                         Log.d(TAG, "customer wants to receive more information");
                         try {
-                            recognizer.stopRecognition();
                             recognizer.removeGrammarConstraint(yesSlotGrammar);
                             recognizer.removeGrammarConstraint(noSlotGrammar);
                             recognizer.addGrammarConstraint(questionInformationSlotGrammar);
@@ -344,7 +324,6 @@ public class RecognitionService extends Service {
                         }
                         SpeakService.getInstance().speak("Okay, ask me another question.");
                         dialogueStatus = DialogueStatus.MODEL_SELECTED;
-                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
                     return true;
@@ -362,7 +341,6 @@ public class RecognitionService extends Service {
                         }
                         SpeakService.getInstance().speak("Alright. If you have more questions, you could talk to a human salesman now. Should I call someone?");
                         dialogueStatus = DialogueStatus.CALL_SALESMAN;
-                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
 
@@ -370,7 +348,6 @@ public class RecognitionService extends Service {
                         Log.d(TAG, "customer wants to see another car");
 
                         try {
-                            recognizer.stopRecognition();
                             recognizer.removeGrammarConstraint(yesSlotGrammar);
                             recognizer.removeGrammarConstraint(noSlotGrammar);
                             recognizer.addGrammarConstraint(categorySlotGrammar);
@@ -384,7 +361,6 @@ public class RecognitionService extends Service {
                             SpeakService.getInstance().speak(cat.getName());
                         }
                         dialogueStatus = DialogueStatus.CUSTOMER_INTERESTED;
-                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
                     return true;
@@ -396,7 +372,6 @@ public class RecognitionService extends Service {
                     if (isCommand(result, noCommandList)) {
                         Log.d(TAG, "customer does not want to call a salesman");
                         try {
-                            recognizer.stopRecognition();
                             recognizer.removeGrammarConstraint(yesSlotGrammar);
                             recognizer.addGrammarConstraint(additionalConsultationSlotGrammar);
                         } catch (VoiceException e) {
@@ -405,7 +380,6 @@ public class RecognitionService extends Service {
                         SpeakService.getInstance().speak("Alright, Do you want to get additional consultation? We could offer you a phone call," +
                                         " an appointment for a test drive or a sales offer.");
                         dialogueStatus = DialogueStatus.ADDITIONAL_CONSULTATION;
-                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
 
@@ -419,7 +393,7 @@ public class RecognitionService extends Service {
                         }
                         RecognitionService.getInstance().stopListening();
                         SpeakService.getInstance().speak("Okay, I will call a salesman. Please wait here, it will only take some minutes.");
-                        //cms hook --> request url to trigger a web hook
+                        MainActivity.sendMail();
                         return false;
                     }
 
@@ -445,7 +419,6 @@ public class RecognitionService extends Service {
                     else if (result.contains("offer") || result.contains("phone call") || result.contains("test drive")) {
                         Log.d(TAG, "customer wants additional consultation");
                         try {
-                            recognizer.stopRecognition();
                             recognizer.removeGrammarConstraint(additionalConsultationSlotGrammar);
                             recognizer.addGrammarConstraint(yesSlotGrammar);
                         } catch (VoiceException e) {
@@ -466,7 +439,6 @@ public class RecognitionService extends Service {
                         SpeakService.getInstance().speak("We need to collect some information from you to make an appointment or" +
                                 "to send you an offer. Are you okay with that?");
                         dialogueStatus = DialogueStatus.CONTACT_INFORMATION;
-                        RecognitionService.getInstance().startRecognition();
                         return true;
                     }
                     return true;
@@ -580,15 +552,6 @@ public class RecognitionService extends Service {
         }
     }
 
-    public void startRecognition() {
-        try {
-            this.recognizer.startRecognitionMode(recognitionListener);
-        }
-        catch (VoiceException e) {
-            Log.w(TAG, "Exception: ", e);
-        }
-    }
-
     /**
      * check if the the recognition result contains a string of the given command list
      * @param recognition
@@ -602,6 +565,38 @@ public class RecognitionService extends Service {
             }
         }
         return false;
+    }
+
+
+    public String buildCategoryString() {
+        StringBuilder builder = new StringBuilder();
+
+        for (Category cat : MainActivity.categories) {
+            if (builder.length() == 0) {
+                builder.append("What category are you interested in? ");
+                builder.append(cat.getName());
+            }
+            builder.append(", " + cat.getName());
+        }
+        builder.append(".");
+        String string = builder.toString();
+        return string;
+    }
+
+
+    public String buildModelString() {
+        StringBuilder builder = new StringBuilder();
+
+        for (CarModel model : carModelOptions) {
+            if (builder.length() == 0) {
+                builder.append("Alright. Please tell me which model I should show you. Available models for this category are: ");
+                builder.append(model.getName());
+            }
+            builder.append(", " + model.getName());
+        }
+        builder.append(".");
+        String string = builder.toString();
+        return string;
     }
 
 

@@ -78,7 +78,6 @@ public class BaseService extends Service {
             public void onCheckPointArrived(CheckPoint checkPoint, final Pose2D realPose, boolean isLast) {
                 Log.i(TAG, "Arrived to checkpoint: " + checkPoint);
                 SpeakService.getInstance().speak("Okay, here we are. I can start with general information about the car or you can ask me a particular question.");
-                RecognitionService.getInstance().startRecognition();
             }
 
             @Override
@@ -123,11 +122,11 @@ public class BaseService extends Service {
         if (!this.base.isVLSStarted()) {
             Log.d(TAG, "starting VLS");
 
-            base.startVLS(true, true, this.startVlsListener);
+            this.base.startVLS(true, true, this.startVlsListener);
             this.base.setOnCheckPointArrivedListener(this.checkpointListener);
             // Wait for VLS listener to finish, otherwise our moves will throw exceptions
             try {
-                while (!base.isVLSStarted()) {
+                while (!this.base.isVLSStarted()) {
                     Log.d(TAG, "Waiting for VLS to get ready...");
                     Thread.sleep(100);
                 }
@@ -142,8 +141,8 @@ public class BaseService extends Service {
             this.base.setUltrasonicObstacleAvoidanceDistance(0.5f);
             this.base.setObstacleStateChangeListener(this.obstacleStateChangedListener);
 
-            Log.d(TAG, "Setting up Obstacle Avoidance:  " + base.isUltrasonicObstacleAvoidanceEnabled() +
-                    ". Distance: " + base.getUltrasonicObstacleAvoidanceDistance());
+            Log.d(TAG, "Setting up Obstacle Avoidance:  " + this.base.isUltrasonicObstacleAvoidanceEnabled() +
+                    ". Distance: " + this.base.getUltrasonicObstacleAvoidanceDistance());
         }
     }
 }

@@ -10,15 +10,8 @@
     <string name="address">Address</string>
     <string name="phone_number">Phone Number</string>
     <string name="e_mail">E-Mail</string>
-    <string name="send">Send</string>
     <string name="house_number">House Number</string>
     <string name="zip_code">Zip Code</string>
     <string name="city">City</string>
-
-    <string-array name="contact_reason">
-        <item>Additional consulting</item>
-        <item>Test drive</item>
-        <item>Sales offer</item>
-    </string-array>
-
+    <string name="send">Send</string>
 </resources>

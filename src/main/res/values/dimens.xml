@@ -3,5 +3,4 @@
     <dimen name="activity_general_margin">20dp</dimen>
     <dimen name="textbox_margin">10dp</dimen>
     <dimen name="textbox">5dp</dimen>
-
 </resources>

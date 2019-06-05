@@ -111,12 +111,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                 // get map objects from database which include the car and its respective spot
                 requestHandler.makeRequest(RequestHandler.Collection.SHOWROOM_MAP);
-
             }
         }.start();
     }
 
-    private void sendMail(){
+    public static void sendMail(){
         Log.d(TAG, "starting mail method");
         new Thread(new Runnable() {
 
@@ -125,7 +124,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 try {
                     GMailSender sender = new GMailSender("loomo.email@gmail.com",
                             "loomo@MBC");
-                    sender.sendMail("Hello from JavaMail", "Body from JavaMail",
+                    sender.sendMail("Customer Request", "Hello, a customer has told Loomo, the Car Master, that he/sha wants to receive " +
+                                    "more information from a personal salesman. Please go to Loomo to serve the corresponding customer: " + customer.getFirstName() +
+                            customer.getLastName() + ".",
                             "loomo.email@gmail.com", "thomas.lehenberger@gmail.com");
                 } catch (Exception e) {
                     Log.e("SendMail", e.getMessage(), e);
@@ -133,7 +134,5 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
 
         }).start();
-
-
     }
 }

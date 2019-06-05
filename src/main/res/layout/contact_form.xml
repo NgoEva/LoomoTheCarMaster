@@ -8,13 +8,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="@dimen/activity_general_margin"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/textbox_margin"
+            android:layout_marginBottom="@dimen/activity_general_margin"
             android:text="@string/contact_form"
             android:textAlignment="center"
             android:textSize="30sp" />
@@ -45,6 +46,7 @@
                     android:layout_marginBottom="@dimen/textbox"
                     android:autofillHints=""
                     android:ems="10"
+                    android:hint="@string/first_name"
                     android:inputType="textPersonName"
                     android:text="@string/first_name"
                     tools:targetApi="o" />
@@ -61,8 +63,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/textbox"
                     android:ems="10"
+                    android:hint="@string/e_mail"
+                    android:importantForAutofill="no"
                     android:inputType="textPersonName"
-                    android:text="@string/e_mail" />
+                    android:text="@string/e_mail"
+                    tools:targetApi="o" />
 
                 <TextView
                     android:id="@+id/textView12"
@@ -75,8 +80,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
+                    android:hint="@string/phone_number"
+                    android:importantForAutofill="no"
                     android:inputType="textPersonName"
-                    android:text="@string/phone_number" />
+                    android:text="@string/phone_number" tools:targetApi="o" />
 
             </LinearLayout>
 
@@ -98,18 +105,22 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/textbox"
                     android:ems="10"
+                    android:hint="@string/last_name"
                     android:importantForAutofill="no"
                     android:inputType="textPersonName"
-                    android:text="@string/last_name" />
+                    android:text="@string/last_name"
+                    tools:targetApi="o" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <TextView
@@ -123,14 +134,17 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ems="10"
+                            android:hint="@string/address"
+                            android:importantForAutofill="no"
                             android:inputType="textPersonName"
-                            android:text="@string/address" />
+                            android:text="@string/address" tools:targetApi="o" />
 
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <TextView
@@ -144,8 +158,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ems="10"
+                            android:hint="@string/house_number"
+                            android:importantForAutofill="no"
                             android:inputType="textPersonName"
-                            android:text="@string/house_number" />
+                            android:text="@string/house_number" tools:targetApi="o" />
 
                     </LinearLayout>
 
@@ -153,13 +169,15 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/textbox"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <TextView
@@ -173,13 +191,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ems="10"
+                            android:hint="@string/zip_code"
+                            android:importantForAutofill="no"
                             android:inputType="textPersonName"
-                            android:text="@string/zip_code" />
+                            android:text="@string/zip_code" tools:targetApi="o" />
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <TextView
@@ -193,8 +214,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ems="10"
+                            android:hint="@string/city"
+                            android:importantForAutofill="no"
                             android:inputType="textPersonName"
-                            android:text="@string/city" />
+                            android:text="@string/city" tools:targetApi="o" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -206,6 +229,7 @@
             android:id="@+id/button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_general_margin"
             android:background="@color/colorPrimary"
             android:text="@string/send"
             android:textAlignment="center"
