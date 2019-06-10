@@ -10,6 +10,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.Volley;
+import com.segway.loomo.objects.Customer;
 import com.segway.loomo.services.DataMapper;
 
 import org.json.JSONException;
@@ -134,10 +135,12 @@ public class RequestHandler {
      * save customer c data to the cms database
      * @param c
      */
-    /*public void sendCustomerData(Customer c) {
+    public void sendCustomerData(Customer c) {
         String url = "https://loomo.exocreations.de/api/collections/save/customers?token=account-1d02ac9dab107851012a327336009c";
-        String bodyContent = "{\"data\": {\"first_name\": \"" + c.getFirstName() + "\", \"last_name\": \"" + c.getLastName() + "\", \"phone_number\": \"" +
-                c.getPhoneNumber() + "\", \"interest\": \"" + c.getInterest() + "\"}}";
+        String bodyContent = "{\"data\": {\"first_name\": \"" + c.getFirstName() + "\", \"last_name\": \"" + c.getLastName() + "\", \"email\": \"" +
+                c.getEmail() + "\", \"phone_number\": \"" + c.getPhoneNumber() + "\", \"address\": \"" + c.getAddress() +
+                "\", \"house_number\": \"" + c.getHouseNumber() + "\", \"zip_code\": \"" + c.getZipCode() + "\", \"city\": \"" + c.getCity() +
+                "\", \"interest\": \"" + c.getInterest() + "\"}}";
 
         try {
             JSONObject body = new JSONObject(bodyContent);
@@ -159,7 +162,7 @@ public class RequestHandler {
         catch(JSONException e) {
             Log.w( null, "Exception: ", e);
         }
-    }*/
+    }
 
     /**
      * class which defines the possible request types

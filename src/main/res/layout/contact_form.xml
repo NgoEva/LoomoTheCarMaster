@@ -6,222 +6,290 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/activity_general_margin"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="20dp"
+        tools:layout_editor_absoluteY="20dp">
 
         <TextView
-            android:id="@+id/contact_form"
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/textbox_margin"
+            android:layout_marginBottom="@dimen/activity_general_margin"
             android:text="@string/contact_form"
             android:textAlignment="center"
             android:textSize="30sp" />
 
         <LinearLayout
+            android:id="@+id/form_field_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/textbox_margin"
-            android:baselineAligned="false"
-            android:orientation="horizontal">
+            android:layout_marginBottom="@dimen/activity_general_margin"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:id="@+id/first_row"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_marginBottom="@dimen/textbox_margin"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:weightSum="100">
 
-                <TextView
-                    android:id="@+id/first_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/first_name" />
+                <LinearLayout
+                    android:id="@+id/first_name_field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/textbox"
+                    android:layout_weight="50"
+                    android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/firstName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/textbox"
-                    android:autofillHints=""
-                    android:ems="10"
-                    android:hint="@string/first_name"
-                    android:inputType="textPersonName"
-                    android:text="@string/first_name"
-                    tools:targetApi="o" />
+                    <TextView
+                        android:id="@+id/text_first_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/first_name_label" />
 
-                <TextView
-                    android:id="@+id/email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/e_mail" />
+                    <EditText
+                        android:id="@+id/edit_first_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/textbox"
+                        android:autofillHints=""
+                        android:ems="10"
+                        android:hint="@string/first_name"
+                        android:inputType="textPersonName"
+                        android:nextFocusDown="@id/edit_last_name"
+                        tools:targetApi="o" />
 
-                <EditText
-                    android:id="@+id/eMail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/textbox"
-                    android:ems="10"
-                    android:hint="@string/e_mail"
-                    android:importantForAutofill="no"
-                    android:inputType="textPersonName"
-                    android:text="@string/e_mail"
-                    tools:targetApi="o" />
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/phone_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/phone_number" />
+                <LinearLayout
+                    android:id="@+id/last_name_field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/textbox"
+                    android:layout_weight="50"
+                    android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/phoneNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="@string/phone_number"
-                    android:importantForAutofill="no"
-                    android:inputType="textPersonName"
-                    android:text="@string/phone_number"
-                    tools:targetApi="o" />
+                    <TextView
+                        android:id="@+id/text_last_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/last_name_label" />
+
+                    <EditText
+                        android:id="@+id/edit_last_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/textbox"
+                        android:ems="10"
+                        android:hint="@string/last_name"
+                        android:importantForAutofill="no"
+                        android:inputType="textPersonName"
+                        android:nextFocusDown="@id/edit_email"
+                        tools:targetApi="o" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:id="@+id/second_row"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/last_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/last_name" />
-
-                <EditText
-                    android:id="@+id/lastName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/textbox"
-                    android:ems="10"
-                    android:hint="@string/last_name"
-                    android:importantForAutofill="no"
-                    android:inputType="textPersonName"
-                    android:text="@string/last_name"
-                    tools:targetApi="o" />
+                android:layout_marginBottom="@dimen/textbox_margin"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:weightSum="100">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/email_field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/textbox"
+                    android:layout_weight="50"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/text_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/e_mail_label" />
+
+                    <EditText
+                        android:id="@+id/edit_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/textbox"
+                        android:ems="10"
+                        android:hint="@string/e_mail"
+                        android:importantForAutofill="no"
+                        android:inputType="textEmailAddress"
+                        android:nextFocusDown="@id/edit_phone_number"
+                        tools:targetApi="o" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/phone_number_field"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/textbox"
+                    android:layout_weight="50"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/text_phone_number"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/phone_number_label" />
+
+                    <EditText
+                        android:id="@+id/edit_phone_number"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="@string/phone_number"
+                        android:importantForAutofill="no"
+                        android:inputType="textPhonetic|phone"
+                        android:nextFocusDown="@id/edit_address"
+                        tools:targetApi="o" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/third_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:weightSum="100">
+
+                <LinearLayout
+                    android:id="@+id/address_container_left"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/textbox"
+                    android:layout_weight="50"
                     android:baselineAligned="false"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="50">
 
                     <LinearLayout
+                        android:id="@+id/address_field"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:layout_weight="35"
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/address"
+                            android:id="@+id/text_address"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/address" />
 
                         <EditText
-                            android:id="@+id/addresse"
+                            android:id="@+id/edit_address"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ems="10"
                             android:hint="@string/address"
                             android:importantForAutofill="no"
-                            android:inputType="textPersonName"
-                            android:text="@string/address"
+                            android:inputType="textPostalAddress"
+                            android:nextFocusDown="@id/edit_house_number"
                             tools:targetApi="o" />
 
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/house_number_field"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:layout_weight="15"
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/house_number"
+                            android:id="@+id/text_house_number"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/house_number" />
 
                         <EditText
-                            android:id="@+id/houseNumber"
+                            android:id="@+id/edit_house_number"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ems="10"
                             android:hint="@string/house_number"
                             android:importantForAutofill="no"
-                            android:inputType="textPersonName"
-                            android:text="@string/house_number"
+                            android:inputType="text|textPostalAddress"
+                            android:nextFocusDown="@id/edit_zip_code"
                             tools:targetApi="o" />
 
                     </LinearLayout>
-
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/textbox"
+                    android:id="@+id/address_container_right"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/textbox"
+                    android:layout_weight="50"
                     android:baselineAligned="false"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="50">
 
                     <LinearLayout
+                        android:id="@+id/zip_code_field"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:layout_weight="15"
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/zip_code"
+                            android:id="@+id/text_zip_code"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/zip_code" />
 
                         <EditText
-                            android:id="@+id/zipCode"
+                            android:id="@+id/edit_zip_code"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ems="10"
                             android:hint="@string/zip_code"
                             android:importantForAutofill="no"
-                            android:inputType="textPersonName"
-                            android:text="@string/zip_code"
+                            android:inputType="number|textPostalAddress"
+                            android:nextFocusDown="@id/edit_city"
                             tools:targetApi="o" />
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/city_field"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="35"
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/city_stadt"
+                            android:id="@+id/text_city"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/city" />
 
                         <EditText
-                            android:id="@+id/city"
+                            android:id="@+id/edit_city"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ems="10"
                             android:hint="@string/city"
                             android:importantForAutofill="no"
-                            android:inputType="textPersonName"
-                            android:text="@string/city"
+                            android:inputType="textPostalAddress"
                             tools:targetApi="o" />
                     </LinearLayout>
                 </LinearLayout>
@@ -234,11 +302,11 @@
             android:id="@+id/send"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/textbox_margin"
             android:background="@color/colorPrimary"
             android:text="@string/send"
             android:textAlignment="center"
             android:textColor="@color/colorWhite" />
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

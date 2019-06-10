@@ -6,6 +6,7 @@ import android.util.Log;
 import com.segway.loomo.MainActivity;
 import com.segway.loomo.objects.CarModel;
 import com.segway.loomo.objects.Category;
+import com.segway.loomo.objects.Customer;
 import com.segway.loomo.objects.MapObject;
 import com.segway.robot.sdk.base.bind.ServiceBinder;
 import com.segway.robot.sdk.voice.Recognizer;
@@ -31,8 +32,8 @@ public class RecognitionService extends Service {
 
     private RecognitionListener recognitionListener;
 
-    private static List<String> yesCommandList;
-    private static List<String> noCommandList;
+    private List<String> yesCommandList;
+    private List<String> noCommandList;
 
     private GrammarConstraint yesSlotGrammar;
     private GrammarConstraint noSlotGrammar;
@@ -152,7 +153,7 @@ public class RecognitionService extends Service {
                     Log.d(TAG, "customer is selecting category");
                     boolean categoryFound = false;
                     // loop through the categories to check which category the customer selected
-                    for (Category cat : MainActivity.categories) {
+                    for (Category cat : MainActivity.getInstance().categories) {
                         if (result.toLowerCase().contains(cat.getName().toLowerCase())) {
                             Log.d(TAG, cat.getName() + " is selected");
                             try {
@@ -357,7 +358,7 @@ public class RecognitionService extends Service {
                         SpeakService.getInstance().speak("What category are you interested in?");
 
                         // tell customer each available category
-                        for (Category cat : MainActivity.categories) {
+                        for (Category cat : MainActivity.getInstance().categories) {
                             SpeakService.getInstance().speak(cat.getName());
                         }
                         dialogueStatus = DialogueStatus.CUSTOMER_INTERESTED;
@@ -393,7 +394,7 @@ public class RecognitionService extends Service {
                         }
                         RecognitionService.getInstance().stopListening();
                         SpeakService.getInstance().speak("Okay, I will call a salesman. Please wait here, it will only take some minutes.");
-                        MainActivity.sendMail();
+                        MainActivity.getInstance().sendMail();
                         return false;
                     }
 
@@ -418,6 +419,7 @@ public class RecognitionService extends Service {
 
                     else if (result.contains("offer") || result.contains("phone call") || result.contains("test drive")) {
                         Log.d(TAG, "customer wants additional consultation");
+                        MainActivity.getInstance().customer = new Customer();
                         try {
                             recognizer.removeGrammarConstraint(additionalConsultationSlotGrammar);
                             recognizer.addGrammarConstraint(yesSlotGrammar);
@@ -426,15 +428,15 @@ public class RecognitionService extends Service {
                         }
                         if (result.contains("offer")) {
                             Log.d(TAG, "customer wants a sales offer");
-                            //MainActivity.customer.setInterest("offer");
+                            MainActivity.getInstance().customer.setInterest("offer");
                         }
                         else if (result.contains("phone call")) {
                             Log.d(TAG, "customer wants a phone call");
-                            //MainActivity.customer.setInterest("phone call");
+                            MainActivity.getInstance().customer.setInterest("phone call");
                         }
                         else if (result.contains("test drive")) {
                             Log.d(TAG, "customer wants a test drive");
-                            //MainActivity.customer.setInterest("test drive");
+                            MainActivity.getInstance().customer.setInterest("test drive");
                         }
                         SpeakService.getInstance().speak("We need to collect some information from you to make an appointment or" +
                                 "to send you an offer. Are you okay with that?");
@@ -450,7 +452,7 @@ public class RecognitionService extends Service {
                     if (isCommand(result, yesCommandList)) {
                         shouldRemove = true;
                         SpeakService.getInstance().speak("Please enter your contact information on the screen and confirm.");
-                        //show contact form --> on send button pressed
+                        MainActivity.getInstance().switchScreen();
                     }
                     else if (isCommand(result, noCommandList)) {
                         shouldRemove = true;
@@ -571,7 +573,7 @@ public class RecognitionService extends Service {
     public String buildCategoryString() {
         StringBuilder builder = new StringBuilder();
 
-        for (Category cat : MainActivity.categories) {
+        for (Category cat : MainActivity.getInstance().categories) {
             if (builder.length() == 0) {
                 builder.append("What category are you interested in? ");
                 builder.append(cat.getName());
@@ -608,7 +610,7 @@ public class RecognitionService extends Service {
     private ArrayList<MapObject> filterMapObjectsByCategory(Category cat) {
 
         ArrayList<MapObject> carObjects = new ArrayList<>();
-        for (MapObject obj : MainActivity.cars) {
+        for (MapObject obj : MainActivity.getInstance().cars) {
             if(obj.getCar().getCategory().getName().equals(cat.getName())) {
                 carObjects.add(obj);
             }

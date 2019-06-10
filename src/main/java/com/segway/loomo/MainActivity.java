@@ -1,13 +1,12 @@
 package com.segway.loomo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.segway.loomo.objects.Category;
 import com.segway.loomo.objects.Customer;
@@ -20,8 +19,10 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends Activity implements View.OnClickListener {
-    public static final String EXTRA_MESSAGE = "com.loomothecarmaster.MESSAGE";
     private static String TAG = "MainActivity";
+
+    private static Context context;
+    private static MainActivity instance;
 
     private BaseService baseService;
     private RecognitionService recognitionService;
@@ -29,11 +30,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private RequestHandler requestHandler;
 
     private Button start;
-    private Button send;
 
-    public static ArrayList<Category> categories;
-    public static ArrayList<MapObject> cars;
-    public static Customer customer;
+    public ArrayList<Category> categories;
+    public ArrayList<MapObject> cars;
+    public Customer customer;
 
 
     @Override
@@ -41,82 +41,42 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Log.d(TAG, "initialize main activity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setContentView(R.layout.contact_form);
 
+        instance = this;
+        this.context = getApplicationContext();
         this.initServices();
         this.initButtons();
-
-        Intent intent =getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-
-        TextView contact_form = findViewById(R.id.contact_form);
-        TextView first_name = findViewById(R.id.first_name);
-        TextView last_name = findViewById(R.id.last_name);
-        TextView email = findViewById(R.id.email);
-        TextView address = findViewById(R.id.address);
-        TextView house_number = findViewById(R.id.house_number);
-        TextView phone_number = findViewById(R.id.phone_number);
-        TextView zip_code = findViewById(R.id.zip_code);
-        TextView city_stadt = findViewById(R.id.city_stadt);
-
-
-        sendMail();
     }
 
-
-
-    public void sendCustomerData (View view) {
-
-    Intent intent = new Intent(this, ContactFormActivity.class);
-        EditText firstName = (EditText) findViewById(R.id.firstName);
-        EditText lastName =(EditText)findViewById(R.id.lastName);
-        EditText eMail = (EditText)findViewById(R.id.eMail);
-        EditText addresse = (EditText) findViewById(R.id.addresse);
-        EditText houseNumber =(EditText)findViewById(R.id.houseNumber);
-        EditText zipCode = (EditText) findViewById(R.id.zipCode);
-        EditText city = (EditText) findViewById(R.id.city);
-        EditText phoneNumber = (EditText) findViewById(R.id.phoneNumber);
-
-        String message1 = firstName.getText().toString();
-        String message2 = lastName.getText().toString();
-        String message3 = eMail.getText().toString();
-        String message4 = addresse.getText().toString();
-        String message5 = houseNumber.getText().toString();
-        String message6 = zipCode.getText().toString();
-        String message7 = city.getText().toString();
-        String message8 = phoneNumber.getText().toString();
-
-        intent.putExtra(EXTRA_MESSAGE, message1);
-        intent.putExtra(EXTRA_MESSAGE, message2);
-        intent.putExtra(EXTRA_MESSAGE, message3);
-        intent.putExtra(EXTRA_MESSAGE, message4);
-        intent.putExtra(EXTRA_MESSAGE, message5);
-        intent.putExtra(EXTRA_MESSAGE, message6);
-        intent.putExtra(EXTRA_MESSAGE, message7);
-        intent.putExtra(EXTRA_MESSAGE, message8);
-
-        startActivity(intent);
-
+    /**
+     * returns the main activity instance
+     * @return MainActivity
+     */
+    public static MainActivity getInstance() {
+        Log.d(TAG, "get main activity instance");
+        if (instance == null) {
+            throw new IllegalStateException("MainActivity instance not initialized yet");
+        }
+        return instance;
     }
-
-
-
-
 
     private void initServices(){
         Log.d(TAG, "init services");
-        this.baseService = new BaseService(getApplicationContext());
-        this.recognitionService = new RecognitionService(getApplicationContext());
-        this.speakService = new SpeakService(getApplicationContext());
-        this.requestHandler = new RequestHandler(getApplicationContext());
+        this.baseService = new BaseService(MainActivity.getInstance().getApplicationContext());
+        this.recognitionService = new RecognitionService(MainActivity.getInstance().getApplicationContext());
+        this.speakService = new SpeakService(MainActivity.getInstance().getApplicationContext());
+        this.requestHandler = new RequestHandler(MainActivity.getInstance().getApplicationContext());
     }
 
     private void initButtons() {
         Log.d(TAG, "init buttons");
         this.start = (Button) findViewById(R.id.start);
         this.start.setOnClickListener(this);
-        this.send = (Button) findViewById(R.id.send);
-        this.send.setOnClickListener(this);
+    }
+
+    public void switchScreen() {
+        Intent nextScreen = new Intent(MainActivity.getInstance().getApplicationContext(), ContactFormActivity.class);
+        startActivity(nextScreen);
     }
 
     protected void onDestroy() {
@@ -130,12 +90,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-
-
-        sendMail();
         switch (view.getId()) {
-
-
             case R.id.start:
                 Log.d(TAG, "start-button clicked");
                 this.start.setEnabled(false);
@@ -143,22 +98,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 this.speakService.speak("Hello, I am Loomo, the Car Master. Do you want to know something about our cars?");
                 this.recognitionService.startListening();
                 break;
-            case R.id.send:
-                Log.d(TAG, "send-button clicked");
-                send.setEnabled(false);
-                speakService.speak("Thank you! We will contact you as soon as possible. Goodbye and have a nice day!");
-                mapCustomer();
-                requestHandler.sendCustomerData(customer);
         }
-    }
-
-    //contact_form R.setString(R.string.interest, customer.getInterest()); needs to be prefilled with customers interest
-
-    public void mapCustomer() {
-        customer.setFirstName(getString(R.string.first_name));
-        customer.setLastName(getString(R.string.last_name));
-        customer.setPhoneNumber(getString(R.string.phone_number));
-        customer.setInterest(getString(R.string.interest));
     }
 
     private void getData() {
@@ -174,7 +114,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }.start();
     }
 
-    public static void sendMail(){
+    public void sendMail(){
         Log.d(TAG, "starting mail method");
         new Thread(new Runnable() {
 

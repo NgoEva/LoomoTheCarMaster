@@ -54,7 +54,7 @@ public class DataMapper {
         catch(JSONException e) {
             Log.d(TAG, "Exception: ", e);
         }
-        MainActivity.categories = categories;
+        MainActivity.getInstance().categories = categories;
     }
 
     /**
@@ -131,6 +131,17 @@ public class DataMapper {
         } catch(JSONException e) {
             Log.d(TAG, "Exception: ", e);
         }
-        MainActivity.cars = mapObjects;
+        MainActivity.getInstance().cars = mapObjects;
+    }
+
+    public static void mapCustomer(String firstName, String lastName, String email, String address, String houseNumber, String phoneNumber, String zipCode, String city) {
+        MainActivity.getInstance().customer.setFirstName(firstName);
+        MainActivity.getInstance().customer.setLastName(lastName);
+        MainActivity.getInstance().customer.setEmail(email);
+        MainActivity.getInstance().customer.setAddress(address);
+        MainActivity.getInstance().customer.setHouseNumber(houseNumber);
+        MainActivity.getInstance().customer.setPhoneNumber(phoneNumber);
+        MainActivity.getInstance().customer.setZipCode(zipCode);
+        MainActivity.getInstance().customer.setCity(city);
     }
 }
