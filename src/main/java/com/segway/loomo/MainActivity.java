@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.segway.loomo.objects.Category;
 import com.segway.loomo.objects.Customer;
@@ -30,6 +31,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private RequestHandler requestHandler;
 
     private Button start;
+    public TextView info;
 
     public ArrayList<Category> categories;
     public ArrayList<MapObject> cars;
@@ -45,7 +47,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         instance = this;
         this.context = getApplicationContext();
         this.initServices();
-        this.initButtons();
+        this.initLayoutElements();
     }
 
     /**
@@ -68,9 +70,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         this.requestHandler = new RequestHandler(MainActivity.getInstance().getApplicationContext());
     }
 
-    private void initButtons() {
+    private void initLayoutElements() {
         Log.d(TAG, "init buttons");
-        this.start = (Button) findViewById(R.id.start);
+        this.start = findViewById(R.id.start);
+        this.info = findViewById(R.id.info);
+
         this.start.setOnClickListener(this);
     }
 
@@ -95,10 +99,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 Log.d(TAG, "start-button clicked");
                 this.start.setEnabled(false);
                 this.getData();
+                this.init();
+                this.recognitionService.addYesNoGrammar();
                 this.speakService.speak("Hello, I am Loomo, the Car Master. Do you want to know something about our cars?");
-                this.recognitionService.startListening();
+
                 break;
         }
+    }
+
+    private void init() {
+        recognitionService.init();
+        recognitionService.initListeners();
+
+        speakService.init();
+        speakService.initListeners();
+
+        baseService.init();
+        baseService.initListeners();
     }
 
     private void getData() {

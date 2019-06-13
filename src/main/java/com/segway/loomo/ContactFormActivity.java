@@ -36,7 +36,7 @@ public class ContactFormActivity extends Activity implements View.OnClickListene
 }
 
     private void initButtons() {
-        this.send = (Button) findViewById(R.id.send);
+        this.send = findViewById(R.id.send);
         this.send.setOnClickListener(this);
     }
 

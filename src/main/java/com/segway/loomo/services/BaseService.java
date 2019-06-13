@@ -1,5 +1,6 @@
 package com.segway.loomo.services;
 
+import com.segway.loomo.MainActivity;
 import com.segway.loomo.objects.Spot;
 
 import android.content.Context;
@@ -36,8 +37,6 @@ public class BaseService extends Service {
     public BaseService(Context context) {
         Log.d(TAG, "base service initiated");
         this.context = context;
-        this.init();
-        this.initListeners();
         instance = this;
     }
 
@@ -77,7 +76,9 @@ public class BaseService extends Service {
         this.checkpointListener = new CheckPointStateListener() {
             public void onCheckPointArrived(CheckPoint checkPoint, final Pose2D realPose, boolean isLast) {
                 Log.i(TAG, "Arrived to checkpoint: " + checkPoint);
-                SpeakService.getInstance().speak("Okay, here we are. I can start with general information about the car or you can ask me a particular question.");
+                String text = "Okay, here we are. I can start with general information about the car or you can ask me a particular question.";
+                MainActivity.getInstance().info.setText(text);
+                SpeakService.getInstance().speak(text);
             }
 
             @Override
@@ -104,7 +105,7 @@ public class BaseService extends Service {
 
     public void resetPosition() {
         Log.d(TAG, "reset original point");
-        this.setupNavigationVLS();
+        this.base.startVLS(true, true, this.startVlsListener);
         this.base.cleanOriginalPoint();
         PoseVLS pose2D = this.base.getVLSPose(-1);
         this.base.setOriginalPoint(pose2D);

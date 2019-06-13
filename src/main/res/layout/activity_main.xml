@@ -20,25 +20,15 @@
         android:textSize="30sp" />
 
     <TextView
-        android:id="@+id/wakeUpInfo"
+        android:id="@+id/info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/textbox_margin"
         android:layout_weight="0"
         android:text="@string/wakeup_info"
+        android:textAlignment="center"
         android:textColor="@color/colorBlack"
         android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/wakeUpWords"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/textbox_margin"
-        android:layout_weight="0"
-        android:text="@string/wakeup_words"
-        android:textColor="@color/colorBlack"
-        android:textSize="15sp"
-        android:textStyle="italic" />
 
     <Button
         android:id="@+id/start"

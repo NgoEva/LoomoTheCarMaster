@@ -103,6 +103,7 @@ public class DataMapper {
         try {
             JSONObject spotObject = obj.getJSONObject("spot");
             spot.setId(spotObject.getString("_id"));
+            spot.setName(spotObject.getString("name"));
             spot.setX_coordinate(spotObject.getDouble("x_coordinate"));
             spot.setY_coordinate(spotObject.getDouble("y_coordinate"));
 

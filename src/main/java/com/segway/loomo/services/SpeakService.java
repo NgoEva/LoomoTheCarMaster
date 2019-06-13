@@ -30,8 +30,6 @@ public class SpeakService extends Service {
     public SpeakService(Context context) {
         Log.d(TAG, "speaker service initiated");
         this.context = context;
-        this.init();
-        this.initListeners();
         instance = this;
     }
 
@@ -83,7 +81,7 @@ public class SpeakService extends Service {
         try {
             this.speaker.speak(text, this.ttsListener);
             Log.d(TAG, "before speak ");
-            this.speaker.waitForSpeakFinish(5000);
+            this.speaker.waitForSpeakFinish(10000);
             Log.d(TAG, "after speak ");
         }
         catch(VoiceException e) {

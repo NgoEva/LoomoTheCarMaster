@@ -14,27 +14,18 @@
         tools:layout_editor_absoluteX="20dp"
         tools:layout_editor_absoluteY="20dp">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_general_margin"
-            android:text="@string/contact_form"
-            android:textAlignment="center"
-            android:textSize="30sp" />
-
         <LinearLayout
             android:id="@+id/form_field_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_general_margin"
+            android:layout_marginBottom="@dimen/textbox_margin"
             android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/first_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/textbox_margin"
+                android:layout_marginBottom="@dimen/textbox"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
                 android:weightSum="100">
@@ -61,8 +52,8 @@
                         android:autofillHints=""
                         android:ems="10"
                         android:hint="@string/first_name"
+                        android:imeOptions="normal"
                         android:inputType="textPersonName"
-                        android:nextFocusDown="@id/edit_last_name"
                         tools:targetApi="o" />
 
                 </LinearLayout>
@@ -88,9 +79,9 @@
                         android:layout_marginBottom="@dimen/textbox"
                         android:ems="10"
                         android:hint="@string/last_name"
+                        android:imeOptions="normal"
                         android:importantForAutofill="no"
                         android:inputType="textPersonName"
-                        android:nextFocusDown="@id/edit_email"
                         tools:targetApi="o" />
 
                 </LinearLayout>
@@ -101,7 +92,7 @@
                 android:id="@+id/second_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/textbox_margin"
+                android:layout_marginBottom="@dimen/textbox"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
                 android:weightSum="100">
@@ -127,9 +118,9 @@
                         android:layout_marginBottom="@dimen/textbox"
                         android:ems="10"
                         android:hint="@string/e_mail"
+                        android:imeOptions="normal"
                         android:importantForAutofill="no"
                         android:inputType="textEmailAddress"
-                        android:nextFocusDown="@id/edit_phone_number"
                         tools:targetApi="o" />
 
                 </LinearLayout>
@@ -154,9 +145,9 @@
                         android:layout_height="wrap_content"
                         android:ems="10"
                         android:hint="@string/phone_number"
+                        android:imeOptions="normal"
                         android:importantForAutofill="no"
                         android:inputType="textPhonetic|phone"
-                        android:nextFocusDown="@id/edit_address"
                         tools:targetApi="o" />
 
                 </LinearLayout>
@@ -200,9 +191,9 @@
                             android:layout_height="wrap_content"
                             android:ems="10"
                             android:hint="@string/address"
+                            android:imeOptions="normal"
                             android:importantForAutofill="no"
                             android:inputType="textPostalAddress"
-                            android:nextFocusDown="@id/edit_house_number"
                             tools:targetApi="o" />
 
                     </LinearLayout>
@@ -224,11 +215,11 @@
                             android:id="@+id/edit_house_number"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:ems="10"
+                            android:ems="5"
                             android:hint="@string/house_number"
+                            android:imeOptions="normal"
                             android:importantForAutofill="no"
                             android:inputType="text|textPostalAddress"
-                            android:nextFocusDown="@id/edit_zip_code"
                             tools:targetApi="o" />
 
                     </LinearLayout>
@@ -261,11 +252,11 @@
                             android:id="@+id/edit_zip_code"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:ems="10"
+                            android:ems="5"
                             android:hint="@string/zip_code"
+                            android:imeOptions="normal"
                             android:importantForAutofill="no"
                             android:inputType="number|textPostalAddress"
-                            android:nextFocusDown="@id/edit_city"
                             tools:targetApi="o" />
                     </LinearLayout>
 
@@ -288,6 +279,7 @@
                             android:layout_height="wrap_content"
                             android:ems="10"
                             android:hint="@string/city"
+                            android:imeOptions="actionDone"
                             android:importantForAutofill="no"
                             android:inputType="textPostalAddress"
                             tools:targetApi="o" />
