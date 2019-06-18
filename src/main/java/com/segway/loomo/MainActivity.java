@@ -31,6 +31,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private RequestHandler requestHandler;
 
     private Button start;
+    private Button stop;
     public TextView info;
 
     public ArrayList<Category> categories;
@@ -73,9 +74,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void initLayoutElements() {
         Log.d(TAG, "init buttons");
         this.start = findViewById(R.id.start);
+        this.stop = findViewById(R.id.stop);
         this.info = findViewById(R.id.info);
 
         this.start.setOnClickListener(this);
+        this.stop.setOnClickListener(this);
+
+        this.start.setEnabled(true);
+        this.stop.setEnabled(false);
     }
 
     public void switchScreen() {
@@ -98,25 +104,26 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.start:
                 Log.d(TAG, "start-button clicked");
                 this.start.setEnabled(false);
+                this.stop.setEnabled(true);
                 this.getData();
-                this.init();
-                this.recognitionService.addYesNoGrammar();
                 this.speakService.speak("Hello, I am Loomo, the Car Master. Do you want to know something about our cars?");
+                this.recognitionService.startListening();
 
+                break;
+            case R.id.stop:
+                Log.d(TAG, "start-button clicked");
+                this.stop.setEnabled(false);
+                this.start.setEnabled(true);
+
+                this.onDestroy();
                 break;
         }
     }
 
-    private void init() {
-        recognitionService.init();
-        recognitionService.initListeners();
-
-        speakService.init();
-        speakService.initListeners();
-
-        baseService.init();
-        baseService.initListeners();
-    }
+    /*public static void changeInfoText(Activity activity, String s) {
+        TextView info = activity.findViewById(R.id.info);
+        info.setText(s);
+    }*/
 
     private void getData() {
         new Thread() {

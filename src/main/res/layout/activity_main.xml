@@ -40,4 +40,12 @@
         android:text="@string/start"
         android:textColor="@color/colorWhite" />
 
+    <Button
+        android:id="@+id/stop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_general_margin"
+        android:layout_weight="0"
+        android:text="Button" />
+
 </LinearLayout>

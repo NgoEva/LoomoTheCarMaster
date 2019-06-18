@@ -38,6 +38,8 @@ public class BaseService extends Service {
         Log.d(TAG, "base service initiated");
         this.context = context;
         instance = this;
+        this.init();
+        this.initListeners();
     }
 
     @Override
@@ -77,7 +79,7 @@ public class BaseService extends Service {
             public void onCheckPointArrived(CheckPoint checkPoint, final Pose2D realPose, boolean isLast) {
                 Log.i(TAG, "Arrived to checkpoint: " + checkPoint);
                 String text = "Okay, here we are. I can start with general information about the car or you can ask me a particular question.";
-                MainActivity.getInstance().info.setText(text);
+                //MainActivity.getInstance().changeInfoText(text);
                 SpeakService.getInstance().speak(text);
             }
 

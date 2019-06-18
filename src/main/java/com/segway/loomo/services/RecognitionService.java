@@ -43,9 +43,9 @@ public class RecognitionService extends Service {
     private GrammarConstraint questionInformationSlotGrammar;
     private GrammarConstraint additionalConsultationSlotGrammar;
 
-    private boolean resetPosition = true;
-    private boolean firstBind = true;
-    private String dialogueStatus = "";
+    private boolean resetPosition;
+    private boolean firstBind;
+    private String dialogueStatus;
 
     private ArrayList<MapObject> carOptions;
     private ArrayList<CarModel> carModelOptions;
@@ -71,6 +71,12 @@ public class RecognitionService extends Service {
         Log.d(TAG, "recognition service initiated");
         this.context = context;
         instance = this;
+        this.init();
+        this.initListeners();
+
+        this.resetPosition = true;
+        this.firstBind = true;
+        this.dialogueStatus = DialogueStatus.START_DIALOGUE;
     }
 
     /**
@@ -79,18 +85,21 @@ public class RecognitionService extends Service {
     @Override
     public void init() {
         Log.d(TAG, "init method");
-        this.dialogueStatus = DialogueStatus.START_DIALOGUE;
         this.recognizer = Recognizer.getInstance();
         this.recognizer.bindService(this.context, new ServiceBinder.BindStateListener() {
             @Override
             public void onBind() {
+                Log.d(TAG, "recognizer service bound successfully");
+                Log.d(TAG, dialogueStatus);
                 RecognitionService.getInstance().initControlGrammar();
                 if(firstBind) {
+                    Log.d(TAG, "first bind");
                     addYesNoGrammar();
                 }
+                else {
+                    RecognitionService.getInstance().startListening();
+                }
                 firstBind = false;
-                Log.d(TAG, "recognizer service bound successfully");
-                RecognitionService.getInstance().startListening();
             }
 
             @Override
@@ -133,7 +142,7 @@ public class RecognitionService extends Service {
 
                         //prepare sentence to tell customer the available categories
                         String categoryQuestion = buildCategoryString();
-                        MainActivity.getInstance().info.setText(categoryQuestion);
+                        //MainActivity.getInstance().changeInfoText(MainActivity.getInstance(), categoryQuestion);
                         SpeakService.getInstance().speak(categoryQuestion);
 
                         dialogueStatus = DialogueStatus.CUSTOMER_INTERESTED;
@@ -150,7 +159,7 @@ public class RecognitionService extends Service {
                         }
                         RecognitionService.getInstance().stopListening();
                         String text = "Alright. Thank you and have a nice day!";
-                        MainActivity.getInstance().info.setText(text);
+                        //MainActivity.getInstance().changeInfoText(text);
                         SpeakService.getInstance().speak(text);
                         return false;
                     }
@@ -182,7 +191,7 @@ public class RecognitionService extends Service {
 
                             //prepare sentence to tell customer the available car models
                             String modelQuestion = buildModelString();
-                            MainActivity.getInstance().info.setText(modelQuestion);
+                            //MainActivity.getInstance().changeInfoText(modelQuestion);
                             SpeakService.getInstance().speak(modelQuestion);
 
                             dialogueStatus = DialogueStatus.CATEGORY_SELECTED;
@@ -218,7 +227,7 @@ public class RecognitionService extends Service {
                                 Log.e(TAG, "Exception: ", e);
                             }
                             String text = "Okay! Follow me, I’ll show you the car: " + selectedMapObject.getCar().getName();
-                            MainActivity.getInstance().info.setText(text);
+                            //MainActivity.getInstance().changeInfoText(text);
                             SpeakService.getInstance().speak(text);
 
                             // guide customer to the selected car
@@ -257,7 +266,7 @@ public class RecognitionService extends Service {
                                 selectedMapObject.getCar().getPower() + ". The fuel type is " + selectedMapObject.getCar().getFuelType() +
                                 " and it has a maximum fuel consumption of " + selectedMapObject.getCar().getMaxFuelConsumption() + " litres per 100 kilometres. " +
                                 "With the described equipment this car costs " + selectedMapObject.getCar().getPrice() + " euros. Do you want to see another car?";
-                        MainActivity.getInstance().info.setText(text);
+                        //MainActivity.getInstance().changeInfoText(text);
                         SpeakService.getInstance().speak(text);
                         dialogueStatus = DialogueStatus.NEXT_CAR;
                         return true;
@@ -276,59 +285,59 @@ public class RecognitionService extends Service {
                         if (result.contains("name")) {
                             Log.d(TAG, "customer asked for the name");
                             String text = "This is the " + selectedMapObject.getCar().getName();
-                            MainActivity.getInstance().info.setText(text);
+                            //MainActivity.getInstance().changeInfoText(text);
                             SpeakService.getInstance().speak(text);
                         }
                         else if (result.contains("color")) {
                             Log.d(TAG, "customer asked for the color");
                             String text = "The car is " + selectedMapObject.getCar().getColor();
-                            MainActivity.getInstance().info.setText(text);
+                            //MainActivity.getInstance().changeInfoText(text);
                             SpeakService.getInstance().speak(text);
                         }
                         else if (result.contains("seat number")) {
                             Log.d(TAG, "customer asked for the seat number");
                             String text = "The car has " + selectedMapObject.getCar().getSeatNumber() + " seats.";
-                            MainActivity.getInstance().info.setText(text);
+                            //MainActivity.getInstance().changeInfoText(text);
                             SpeakService.getInstance().speak(text);
                         }
                         else if (result.contains("power")) {
                             Log.d(TAG, "customer asked for the power");
                             String text = "The car has a horsepower of " + selectedMapObject.getCar().getPower();
-                            MainActivity.getInstance().info.setText(text);
+                            //MainActivity.getInstance().changeInfoText(text);
                             SpeakService.getInstance().speak(text);
                         }
                         else if (result.contains("speed")) {
                             Log.d(TAG, "customer asked for the maximum speed");
                             String text = "The car can reach up to " + selectedMapObject.getCar().getMaxSpeed() + " kilometres per hour.";
-                            MainActivity.getInstance().info.setText(text);
+                            //MainActivity.getInstance().changeInfoText(text);
                             SpeakService.getInstance().speak(text);
                         }
                         else if (result.contains("transmission")) {
                             Log.d(TAG, "customer asked for the transmission");
                             String text = "The transmission is " + selectedMapObject.getCar().getTransmission();
-                            MainActivity.getInstance().info.setText(text);
+                            //MainActivity.getInstance().changeInfoText(text);
                             SpeakService.getInstance().speak(text);
                         }
                         else if (result.contains("fuel type")) {
                             Log.d(TAG, "customer asked for the fuel type");
                             String text = "The fuel type is " + selectedMapObject.getCar().getFuelType();
-                            MainActivity.getInstance().info.setText(text);
+                            //MainActivity.getInstance().changeInfoText(text);
                             SpeakService.getInstance().speak(text);
                         }
                         else if (result.contains("fuel consumption")) {
                             Log.d(TAG, "customer asked for the consumption");
                             String text = "The car has a maximum fuel consumption of " + selectedMapObject.getCar().getMaxFuelConsumption() + " litres per 100 kilometres.";
-                            MainActivity.getInstance().info.setText(text);
+                            //MainActivity.getInstance().changeInfoText(text);
                             SpeakService.getInstance().speak(text);
                         }
                         else if (result.contains("price")) {
                             Log.d(TAG, "customer asked for the price");
                             String text = "With this equipment the car costs " + selectedMapObject.getCar().getPrice() + " euros.";
-                            MainActivity.getInstance().info.setText(text);
+                            //MainActivity.getInstance().changeInfoText(text);
                             SpeakService.getInstance().speak(text);
                         }
                         String text = "Is there something else you want to know?";
-                        MainActivity.getInstance().info.setText(text);
+                        //MainActivity.getInstance().changeInfoText(text);
                         SpeakService.getInstance().speak("Is there something else you want to know?");
                         dialogueStatus = DialogueStatus.MORE_INFORMATION;
                         return true;
@@ -342,7 +351,7 @@ public class RecognitionService extends Service {
                     if (isCommand(result, noCommandList)) {
                         Log.d(TAG, "customer does not want to receive more information");
                         String text = "Alright. Do you want to see another car?";
-                        MainActivity.getInstance().info.setText(text);
+                        //MainActivity.getInstance().changeInfoText(text);
                         SpeakService.getInstance().speak(text);
                         dialogueStatus = DialogueStatus.NEXT_CAR;
                         return true;
@@ -358,7 +367,7 @@ public class RecognitionService extends Service {
                             Log.e(TAG, "Exception: ", e);
                         }
                         String text = "Okay, ask me another question.";
-                        MainActivity.getInstance().info.setText(text);
+                        //MainActivity.getInstance().changeInfoText(text);
                         SpeakService.getInstance().speak(text);
                         dialogueStatus = DialogueStatus.MODEL_SELECTED;
                         return true;
@@ -377,7 +386,7 @@ public class RecognitionService extends Service {
                             Log.e(TAG, "Exception: ", e);
                         }
                         String text = "Alright. If you have more questions, you could talk to a human salesman now. Should I call someone?";
-                        MainActivity.getInstance().info.setText(text);
+                        //MainActivity.getInstance().changeInfoText(text);
                         SpeakService.getInstance().speak(text);
                         dialogueStatus = DialogueStatus.CALL_SALESMAN;
                         return true;
@@ -394,7 +403,7 @@ public class RecognitionService extends Service {
                             Log.e(TAG, "Exception: ", e);
                         }
                         String categoryQuestion = buildCategoryString();
-                        MainActivity.getInstance().info.setText(categoryQuestion);
+                        //MainActivity.getInstance().changeInfoText(categoryQuestion);
                         SpeakService.getInstance().speak(categoryQuestion);
 
                         dialogueStatus = DialogueStatus.CUSTOMER_INTERESTED;
@@ -416,7 +425,7 @@ public class RecognitionService extends Service {
                         }
                         String text = "Alright, Do you want to get additional consultation? We could offer you a phone call," +
                                 " an appointment for a test drive or a sales offer.";
-                        MainActivity.getInstance().info.setText(text);
+                        //MainActivity.getInstance().changeInfoText(text);
                         SpeakService.getInstance().speak(text);
                         dialogueStatus = DialogueStatus.ADDITIONAL_CONSULTATION;
                         return true;
@@ -432,7 +441,7 @@ public class RecognitionService extends Service {
                         }
                         RecognitionService.getInstance().stopListening();
                         String text = "Okay, I will call a salesman. Please wait here, it will only take some minutes.";
-                        MainActivity.getInstance().info.setText(text);
+                        //MainActivity.getInstance().changeInfoText(text);
                         SpeakService.getInstance().speak(text);
                         MainActivity.getInstance().sendMail();
                         return false;
@@ -454,7 +463,7 @@ public class RecognitionService extends Service {
                         }
                         RecognitionService.getInstance().stopListening();
                         String text = "Okay. Thank you! See you next time!";
-                        MainActivity.getInstance().info.setText(text);
+                        //MainActivity.getInstance().changeInfoText(text);
                         SpeakService.getInstance().speak(text);
                         return false;
                     }
@@ -482,7 +491,7 @@ public class RecognitionService extends Service {
                         }
                         String text = "We need to collect some information from you to make an appointment or" +
                                 "to send you an offer. Are you okay with that?";
-                        MainActivity.getInstance().info.setText(text);
+                        //MainActivity.getInstance().changeInfoText(text);
                         SpeakService.getInstance().speak(text);
                         dialogueStatus = DialogueStatus.CONTACT_INFORMATION;
                         return true;
@@ -496,14 +505,14 @@ public class RecognitionService extends Service {
                     if (isCommand(result, yesCommandList)) {
                         shouldRemove = true;
                         String text = "Please enter your contact information on the screen and confirm.";
-                        MainActivity.getInstance().info.setText(text);
+                        //MainActivity.getInstance().changeInfoText(text);
                         SpeakService.getInstance().speak(text);
                         MainActivity.getInstance().switchScreen();
                     }
                     else if (isCommand(result, noCommandList)) {
                         shouldRemove = true;
                         String text = "Okay. We are sorry that we cannot offer you additional consultation without your contact information. Thank you and see you next time!";
-                        MainActivity.getInstance().info.setText(text);
+                        //MainActivity.getInstance().changeInfoText(text);
                         SpeakService.getInstance().speak(text);
                     }
                     if (shouldRemove) {
@@ -616,8 +625,8 @@ public class RecognitionService extends Service {
 
     public void addYesNoGrammar() {
         try {
-            recognizer.addGrammarConstraint(yesSlotGrammar);
-            recognizer.addGrammarConstraint(noSlotGrammar);
+            this.recognizer.addGrammarConstraint(this.yesSlotGrammar);
+            this.recognizer.addGrammarConstraint(this.noSlotGrammar);
         }
         catch (VoiceException e) {
             Log.w(TAG, "Exception: ", e);

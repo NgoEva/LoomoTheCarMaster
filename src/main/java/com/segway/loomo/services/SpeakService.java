@@ -31,6 +31,8 @@ public class SpeakService extends Service {
         Log.d(TAG, "speaker service initiated");
         this.context = context;
         instance = this;
+        this.init();
+        this.initListeners();
     }
 
     @Override
@@ -41,7 +43,7 @@ public class SpeakService extends Service {
             public void onBind() {
                 Log.d(TAG, "speaker service bound successfully");
                 try {
-                    speaker.setVolume(50);
+                    speaker.setVolume(30);
                 }
                 catch (VoiceException e) {
                     e.printStackTrace();
