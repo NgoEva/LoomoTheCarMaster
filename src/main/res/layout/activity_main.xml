@@ -20,7 +20,7 @@
         android:textSize="30sp" />
 
     <TextView
-        android:id="@+id/info"
+        android:id="@+id/infoText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/textbox_margin"
@@ -31,21 +31,21 @@
         android:textSize="18sp" />
 
     <Button
-        android:id="@+id/start"
+        android:id="@+id/startButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/textbox_margin"
+        android:layout_marginTop="@dimen/activity_general_margin"
         android:layout_weight="0"
         android:background="@color/colorPrimary"
         android:text="@string/start"
         android:textColor="@color/colorWhite" />
 
     <Button
-        android:id="@+id/stop"
+        android:id="@+id/stopButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_general_margin"
         android:layout_weight="0"
-        android:text="Button" />
+        android:text="@string/stop" />
 
 </LinearLayout>

@@ -16,6 +16,8 @@ import com.segway.loomo.services.BaseService;
 import com.segway.loomo.services.RecognitionService;
 import com.segway.loomo.services.SpeakService;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 
@@ -32,7 +34,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private Button start;
     private Button stop;
-    public TextView info;
+    public static TextView info;
 
     public ArrayList<Category> categories;
     public ArrayList<MapObject> cars;
@@ -73,9 +75,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void initLayoutElements() {
         Log.d(TAG, "init buttons");
-        this.start = findViewById(R.id.start);
-        this.stop = findViewById(R.id.stop);
-        this.info = findViewById(R.id.info);
+        this.start = findViewById(R.id.startButton);
+        this.stop = findViewById(R.id.stopButton);
+        this.info = findViewById(R.id.infoText);
 
         this.start.setOnClickListener(this);
         this.stop.setOnClickListener(this);
@@ -101,7 +103,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.start:
+            case R.id.startButton:
                 Log.d(TAG, "start-button clicked");
                 this.start.setEnabled(false);
                 this.stop.setEnabled(true);
@@ -110,20 +112,33 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 this.recognitionService.startListening();
 
                 break;
-            case R.id.stop:
+            case R.id.stopButton:
                 Log.d(TAG, "start-button clicked");
                 this.stop.setEnabled(false);
                 this.start.setEnabled(true);
+                this.baseService.disconnect();
+                this.speakService.disconnect();
+                this.recognitionService.stopListening();
+                this.recognitionService.disconnect();
+
+                this.baseService = null;
+                this.recognitionService = null;
+                this.speakService = null;
+                this.requestHandler = null;
+
+                this.categories = null;
+                this.cars = null;
+                this.customer = null;
 
                 this.onDestroy();
                 break;
         }
     }
 
-    /*public static void changeInfoText(Activity activity, String s) {
-        TextView info = activity.findViewById(R.id.info);
+    public static void changeInfoText(String s) {
+        //TextView info = findViewById(R.id.infoText);
         info.setText(s);
-    }*/
+    }
 
     private void getData() {
         new Thread() {
