@@ -14,9 +14,7 @@ import com.segway.loomo.objects.Customer;
 import com.segway.loomo.objects.MapObject;
 import com.segway.loomo.services.BaseService;
 import com.segway.loomo.services.RecognitionService;
-import com.segway.loomo.services.SpeakService;
-
-import org.w3c.dom.Text;
+import com.segway.loomo.services.SpeakService;;
 
 import java.util.ArrayList;
 
@@ -114,30 +112,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.stopButton:
                 Log.d(TAG, "start-button clicked");
-                this.stop.setEnabled(false);
-                this.start.setEnabled(true);
-                this.baseService.disconnect();
-                this.speakService.disconnect();
-                this.recognitionService.stopListening();
-                this.recognitionService.disconnect();
+                this.restart();
 
-                this.baseService = null;
-                this.recognitionService = null;
-                this.speakService = null;
-                this.requestHandler = null;
-
-                this.categories = null;
-                this.cars = null;
-                this.customer = null;
-
-                this.onDestroy();
                 break;
         }
     }
 
-    public static void changeInfoText(String s) {
+    public void changeInfoText(String s) {
         Log.d(TAG, "change info text");
-        //TextView info = findViewById(R.id.infoText);
+        TextView info = findViewById(R.id.infoText);
         info.setText(s);
     }
 
@@ -164,8 +147,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     GMailSender sender = new GMailSender("loomo.email@gmail.com",
                             "loomo@MBC");
                     sender.sendMail("Customer Request", "Hello, a customer has told Loomo, the Car Master, that he/sha wants to receive " +
-                                    "more information from a personal salesman. Please go to Loomo to serve the corresponding customer: " + customer.getFirstName() +
-                            customer.getLastName() + ".",
+                                    "more information from a personal salesman. Please go to Loomo to serve the corresponding custome.",
                             "loomo.email@gmail.com", "thomas.lehenberger@gmail.com");
                 } catch (Exception e) {
                     Log.e("SendMail", e.getMessage(), e);
@@ -175,7 +157,24 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }).start();
     }
 
+    public void restart() {
+        this.stop.setEnabled(false);
+        this.start.setEnabled(true);
+        this.baseService.disconnect();
+        this.speakService.disconnect();
+        this.recognitionService.stopListening();
+        this.recognitionService.disconnect();
+        this.requestHandler.cancelPendingRequests();
 
+        this.baseService = null;
+        this.recognitionService = null;
+        this.speakService = null;
+        this.requestHandler = null;
+
+        this.categories = null;
+        this.cars = null;
+        this.customer = null;
+    }
 }
 
 

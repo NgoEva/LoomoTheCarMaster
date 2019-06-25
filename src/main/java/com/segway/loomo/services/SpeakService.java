@@ -43,7 +43,7 @@ public class SpeakService extends Service {
             public void onBind() {
                 Log.d(TAG, "speaker service bound successfully");
                 try {
-                    speaker.setVolume(30);
+                    speaker.setVolume(50);
                 }
                 catch (VoiceException e) {
                     e.printStackTrace();
@@ -83,7 +83,7 @@ public class SpeakService extends Service {
         try {
             Log.d(TAG, "before speak ");
             this.speaker.speak(text, this.ttsListener);
-            //this.speaker.waitForSpeakFinish(10000);
+            this.speaker.waitForSpeakFinish(10000);
             Log.d(TAG, "after speak ");
         }
         catch(VoiceException e) {

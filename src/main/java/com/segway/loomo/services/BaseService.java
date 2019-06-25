@@ -50,6 +50,7 @@ public class BaseService extends Service {
             public void onBind() {
                 Log.d(TAG, "base service bound successfully");
                 base.setControlMode(Base.CONTROL_MODE_NAVIGATION);
+                base.startVLS(true, true, startVlsListener);
             }
 
             @Override
@@ -104,29 +105,28 @@ public class BaseService extends Service {
         this.base.unbindService();
     }
 
-
     public void resetPosition() {
         Log.d(TAG, "reset original point");
-        this.base.startVLS(true, true, this.startVlsListener);
         this.base.cleanOriginalPoint();
+        Log.d(TAG, "cleaned original point");
         PoseVLS pose2D = this.base.getVLSPose(-1);
         this.base.setOriginalPoint(pose2D);
     }
 
     public void startNavigation(boolean resetPosition, Spot spot) {
         Log.i(TAG, "start navigation");
-        if (resetPosition) this.resetPosition();
         this.setupNavigationVLS();
+        if (resetPosition) this.resetPosition();
         Log.i(TAG, "Moving to: " + spot.toString());
         this.base.addCheckPoint(spot.getX_coordinate(), spot.getY_coordinate());
     }
 
     private void setupNavigationVLS() {
-        if (!this.base.isVLSStarted()) {
+        Log.d(TAG, "setup navigation VLS");
+        /*if (!this.base.isVLSStarted()) {
             Log.d(TAG, "starting VLS");
 
             this.base.startVLS(true, true, this.startVlsListener);
-            this.base.setOnCheckPointArrivedListener(this.checkpointListener);
             // Wait for VLS listener to finish, otherwise our moves will throw exceptions
             try {
                 while (!this.base.isVLSStarted()) {
@@ -136,16 +136,16 @@ public class BaseService extends Service {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }*/
+        this.base.setOnCheckPointArrivedListener(this.checkpointListener);
+        // setting up Obstacle Avoidance
+        Log.d(TAG, "Obstacle Avoidance is enabled:  " + this.base.isUltrasonicObstacleAvoidanceEnabled() +
+                ". Distance: " + this.base.getUltrasonicObstacleAvoidanceDistance());
+        this.base.setUltrasonicObstacleAvoidanceEnabled(true);
+        this.base.setUltrasonicObstacleAvoidanceDistance(0.5f);
+        this.base.setObstacleStateChangeListener(this.obstacleStateChangedListener);
 
-            // setting up Obstacle Avoidance
-            Log.d(TAG, "Obstacle Avoidance is enabled:  " + this.base.isUltrasonicObstacleAvoidanceEnabled() +
-                    ". Distance: " + this.base.getUltrasonicObstacleAvoidanceDistance());
-            this.base.setUltrasonicObstacleAvoidanceEnabled(true);
-            this.base.setUltrasonicObstacleAvoidanceDistance(0.5f);
-            this.base.setObstacleStateChangeListener(this.obstacleStateChangedListener);
-
-            Log.d(TAG, "Setting up Obstacle Avoidance:  " + this.base.isUltrasonicObstacleAvoidanceEnabled() +
-                    ". Distance: " + this.base.getUltrasonicObstacleAvoidanceDistance());
-        }
+        Log.d(TAG, "Setting up Obstacle Avoidance:  " + this.base.isUltrasonicObstacleAvoidanceEnabled() +
+                ". Distance: " + this.base.getUltrasonicObstacleAvoidanceDistance());
     }
 }
