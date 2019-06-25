@@ -131,6 +131,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         startActivity(nextScreen);
     }
 
+
+
     /**
      * disconnect base, recognition, speak service and request handler and destroy application
      */

@@ -2,6 +2,7 @@ package com.segway.loomo;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -114,12 +115,19 @@ public class ContactFormActivity extends Activity implements View.OnClickListene
                 if(checkInput()) {
                     Toast.makeText(this, "Your data has been sent! We will contact you as soon as possible. Goodbye and have a nice day!", Toast.LENGTH_LONG).show();
                     SpeakService.getInstance().speak("Thank you! We will contact you as soon as possible. Goodbye and have a nice day!");
+                    switchToMainActivityScreen();
                     DataMapper.mapCustomer(firstName.getText().toString(), lastName.getText().toString(), email.getText().toString(),
                             address.getText().toString(), houseNumber.getText().toString(), phoneNumber.getText().toString(),
                             zipCode.getText().toString(), city.getText().toString());
                     RequestHandler.getInstance().sendCustomerData(MainActivity.getInstance().customer);
                 }
         }
+    }
+
+    public void switchToMainActivityScreen() {
+        Intent nextScreen = new Intent(this.getApplicationContext(), MainActivity.class);
+        startActivity(nextScreen);
+        MainActivity.getInstance().restart();
     }
 }
 
