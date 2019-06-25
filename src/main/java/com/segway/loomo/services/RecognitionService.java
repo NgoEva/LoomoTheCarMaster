@@ -345,11 +345,11 @@ public class RecognitionService extends Service {
                     // handle if customer does not want to receive more information about the car
                     if (result.contains("no") || result.contains("nope") || result.contains("nah")) {
                         Log.d(TAG, "customer does not want to receive more information");
-                        /*try {
+                        try {
                             recognizer.removeGrammarConstraint(questionInformationGrammar);
                         } catch (VoiceException e) {
                             Log.e(TAG, "Exception: ", e);
-                        }*/
+                        }
                         String text = "Alright. Do you want to see another car?";
                         //MainActivity.getInstance().changeInfoText(text);
                         SpeakService.getInstance().speak(text);
