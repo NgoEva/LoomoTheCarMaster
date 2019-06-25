@@ -13,18 +13,6 @@ public class Customer extends AppObject{
 
     public Customer() {}
 
-    public Customer(String firstName, String lastName, String email, String address, String houseNumber,  String zipCode, String city, String phoneNumber, String interest) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.address = address;
-        this.houseNumber = houseNumber;
-        this.zipCode = zipCode;
-        this.city = city;
-        this.phoneNumber = phoneNumber;
-        this.interest = interest;
-    }
-
     public String getFirstName() {
         return firstName;
     }

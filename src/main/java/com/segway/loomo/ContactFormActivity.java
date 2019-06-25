@@ -12,12 +12,20 @@ import android.widget.Toast;
 import com.segway.loomo.services.DataMapper;
 import com.segway.loomo.services.SpeakService;
 
-
+/**
+ * contact form activity class to provide the contact form screen and functionality
+ */
 public class ContactFormActivity extends Activity implements View.OnClickListener {
     private static String TAG = "ContactFormActivity";
 
+    /**
+     * send-button
+     */
     private Button send;
 
+    /**
+     * edit texts of the contact form to get the input information of the customer
+     */
     private EditText firstName;
     private EditText lastName;
     private EditText email;
@@ -37,8 +45,7 @@ public class ContactFormActivity extends Activity implements View.OnClickListene
         setContentView(R.layout.contact_form);
         
         this.initButtons();
-}
-
+    }
 
     /**
      * initialize send button
@@ -49,7 +56,7 @@ public class ContactFormActivity extends Activity implements View.OnClickListene
     }
 
     /**
-     * getting customer data
+     * get the customer data from the contact form
      */
     public void getCustomerData () {
         firstName = findViewById(R.id.edit_first_name);
@@ -63,7 +70,7 @@ public class ContactFormActivity extends Activity implements View.OnClickListene
     }
 
     /**
-     * check if all data has been entered
+     * check if all required data has been entered
      * @return
      */
     private boolean checkInput() {
@@ -95,7 +102,7 @@ public class ContactFormActivity extends Activity implements View.OnClickListene
     }
 
     /**
-     * saving customer data by using the send button
+     * sending and saving customer data to the cms when send-button is clicked
      * @param view
      */
     @Override
@@ -113,7 +120,6 @@ public class ContactFormActivity extends Activity implements View.OnClickListene
                     RequestHandler.getInstance().sendCustomerData(MainActivity.getInstance().customer);
                 }
         }
-
     }
 }
 

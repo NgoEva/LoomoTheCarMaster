@@ -18,24 +18,6 @@ import java.util.ArrayList;
 public class DataMapper {
     private static String TAG = "DataMapper";
 
-      /* private ArrayList<CarModel> mapCarModels(JSONObject response) {
-        ArrayList<CarModel> carModels = new ArrayList<CarModel>();
-        try {
-            JSONArray objects = response.getJSONArray("entries");
-            for(int i = 0; i < objects.length(); i++) {
-                JSONObject obj = objects.getJSONObject(i);
-                CarModel model = new CarModel(obj.getString("name"));
-                model.setId(obj.getString("_id"));
-                carModels.add(model);
-            }
-        }
-        catch(JSONException e) {
-            Log.d( TAG, "Exception: ", e);
-        }
-
-        return carModels;
-    }*/
-
     /**
      * maps the response JSON object to Category objects and saves them in a global variable
      * @param response
@@ -135,6 +117,17 @@ public class DataMapper {
         MainActivity.getInstance().cars = mapObjects;
     }
 
+    /**
+     * maps to the parameter values to the global customer object
+     * @param firstName
+     * @param lastName
+     * @param email
+     * @param address
+     * @param houseNumber
+     * @param phoneNumber
+     * @param zipCode
+     * @param city
+     */
     public static void mapCustomer(String firstName, String lastName, String email, String address, String houseNumber, String phoneNumber, String zipCode, String city) {
         MainActivity.getInstance().customer.setFirstName(firstName);
         MainActivity.getInstance().customer.setLastName(lastName);

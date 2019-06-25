@@ -15,13 +15,30 @@ import com.segway.robot.sdk.base.bind.ServiceBinder;
 import com.segway.robot.sdk.locomotion.sbv.Base;
 import com.segway.robot.sdk.locomotion.sbv.StartVLSListener;
 
+/**
+ * class to provide the base service and handle checkpoint navigation and obstacle avoidance
+ */
 public class BaseService extends Service {
     private static final String TAG = "BaseService";
+
+    /**
+     * the application context
+     */
     private Context context;
 
+    /**
+     * base instance
+     */
     private Base base;
+
+    /**
+     * base service instance
+     */
     private static BaseService instance;
 
+    /**
+     * listeners for the base service: vls listener, checkpoint listener, obstacle listener
+     */
     private StartVLSListener startVlsListener;
     private CheckPointStateListener checkpointListener;
     private ObstacleStateChangedListener obstacleStateChangedListener;
@@ -39,7 +56,6 @@ public class BaseService extends Service {
         return instance;
     }
 
-
     /**
      * constructor to initialize the base service
      * @param context
@@ -53,7 +69,7 @@ public class BaseService extends Service {
     }
 
     /**
-     * initialize the base instance
+     * initialize the base instance, set control mode to navigation and start VLS
      */
     @Override
     public void init() {
@@ -63,6 +79,7 @@ public class BaseService extends Service {
             public void onBind() {
                 Log.d(TAG, "base service bound successfully");
                 base.setControlMode(Base.CONTROL_MODE_NAVIGATION);
+                base.startVLS(true, true, startVlsListener);
             }
 
             @Override
@@ -73,7 +90,7 @@ public class BaseService extends Service {
     }
 
     /**
-     * initialize the base listener
+     * initialize the VLS listener, the checkpoint listener and the obstacle listener
      */
     @Override
     public void initListeners() {
@@ -120,43 +137,44 @@ public class BaseService extends Service {
     @Override
     public void disconnect() {
         Log.d(TAG, "unbind base service");
+        this.base.stop();
+        this.base.stopVLS();
         this.base.unbindService();
     }
 
-
     /**
-     * reset of original position
+     * reset the original point
      */
     public void resetPosition() {
         Log.d(TAG, "reset original point");
-        this.base.startVLS(true, true, this.startVlsListener);
         this.base.cleanOriginalPoint();
+        Log.d(TAG, "cleaned original point");
         PoseVLS pose2D = this.base.getVLSPose(-1);
         this.base.setOriginalPoint(pose2D);
     }
 
     /**
-     * start of navigation to the specified position
+     * start navigation to a spot and reset original point if necessary
      * @param resetPosition
      * @param spot
      */
     public void startNavigation(boolean resetPosition, Spot spot) {
         Log.i(TAG, "start navigation");
-        if (resetPosition) this.resetPosition();
         this.setupNavigationVLS();
+        if (resetPosition) this.resetPosition();
         Log.i(TAG, "Moving to: " + spot.toString());
         this.base.addCheckPoint(spot.getX_coordinate(), spot.getY_coordinate());
     }
 
     /**
-     * initial & starting VLS, set up On Check Point Arrived Listener, set up Obstacle Avoidance
+     * set On-Checkpoint-Arrived-Listener, set up Obstacle Avoidance
      */
     private void setupNavigationVLS() {
-        if (!this.base.isVLSStarted()) {
+        Log.d(TAG, "setup navigation VLS");
+        /*if (!this.base.isVLSStarted()) {
             Log.d(TAG, "starting VLS");
 
             this.base.startVLS(true, true, this.startVlsListener);
-            this.base.setOnCheckPointArrivedListener(this.checkpointListener);
             // Wait for VLS listener to finish, otherwise our moves will throw exceptions
             try {
                 while (!this.base.isVLSStarted()) {
@@ -166,16 +184,16 @@ public class BaseService extends Service {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }*/
+        this.base.setOnCheckPointArrivedListener(this.checkpointListener);
+        // setting up Obstacle Avoidance
+        Log.d(TAG, "Obstacle Avoidance is enabled:  " + this.base.isUltrasonicObstacleAvoidanceEnabled() +
+                ". Distance: " + this.base.getUltrasonicObstacleAvoidanceDistance());
+        this.base.setUltrasonicObstacleAvoidanceEnabled(true);
+        this.base.setUltrasonicObstacleAvoidanceDistance(0.5f);
+        this.base.setObstacleStateChangeListener(this.obstacleStateChangedListener);
 
-            // setting up Obstacle Avoidance
-            Log.d(TAG, "Obstacle Avoidance is enabled:  " + this.base.isUltrasonicObstacleAvoidanceEnabled() +
-                    ". Distance: " + this.base.getUltrasonicObstacleAvoidanceDistance());
-            this.base.setUltrasonicObstacleAvoidanceEnabled(true);
-            this.base.setUltrasonicObstacleAvoidanceDistance(0.5f);
-            this.base.setObstacleStateChangeListener(this.obstacleStateChangedListener);
-
-            Log.d(TAG, "Setting up Obstacle Avoidance:  " + this.base.isUltrasonicObstacleAvoidanceEnabled() +
-                    ". Distance: " + this.base.getUltrasonicObstacleAvoidanceDistance());
-        }
+        Log.d(TAG, "Setting up Obstacle Avoidance:  " + this.base.isUltrasonicObstacleAvoidanceEnabled() +
+                ". Distance: " + this.base.getUltrasonicObstacleAvoidanceDistance());
     }
 }

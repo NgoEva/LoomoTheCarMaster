@@ -14,31 +14,64 @@ import com.segway.loomo.objects.Customer;
 import com.segway.loomo.objects.MapObject;
 import com.segway.loomo.services.BaseService;
 import com.segway.loomo.services.RecognitionService;
-import com.segway.loomo.services.SpeakService;
+import com.segway.loomo.services.SpeakService;;
 
 import java.util.ArrayList;
 
-
+/**
+ * main activity class to provide the start screen and initialize the services
+ */
 public class MainActivity extends Activity implements View.OnClickListener {
     private static String TAG = "MainActivity";
 
+    /**
+     * the application context
+     */
     private static Context context;
+
+    /**
+     * main activity instance
+     */
     private static MainActivity instance;
 
+    /**
+     * loomo services
+     */
     private BaseService baseService;
     private RecognitionService recognitionService;
     private SpeakService speakService;
+
+    /**
+     * request handler
+     */
     private RequestHandler requestHandler;
 
+    /**
+     * layout elements of the start screen
+     */
     private Button start;
     private Button stop;
-    public TextView info;
+    public static TextView info;
 
+    /**
+     * available categories requested from the database
+     */
     public ArrayList<Category> categories;
+
+    /**
+     * available map objects in the car showroom including the cars and their respective spot positions
+     */
     public ArrayList<MapObject> cars;
+
+    /**
+     * the customer
+     */
     public Customer customer;
 
-
+    /**
+     * initialize main activity
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "initialize main activity");
@@ -64,7 +97,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     /**
-     * initialize base, recognition, speak service and request service
+     * initialize base, recognition, speak service and request handler
      */
     private void initServices(){
         Log.d(TAG, "init services");
@@ -79,9 +112,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
      */
     private void initLayoutElements() {
         Log.d(TAG, "init buttons");
-        this.start = findViewById(R.id.start);
-        this.stop = findViewById(R.id.stop);
-        this.info = findViewById(R.id.info);
+        this.start = findViewById(R.id.startButton);
+        this.stop = findViewById(R.id.stopButton);
+        this.info = findViewById(R.id.infoText);
 
         this.start.setOnClickListener(this);
         this.stop.setOnClickListener(this);
@@ -91,7 +124,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     /**
-     * switching the screen between starting page and contact form
+     * switching the screen from start screen to contact form screen
      */
     public void switchScreen() {
         Intent nextScreen = new Intent(MainActivity.getInstance().getApplicationContext(), ContactFormActivity.class);
@@ -99,7 +132,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     /**
-     * disconnecting base, recognition, speak service and request handler
+     * disconnect base, recognition, speak service and request handler and destroy application
      */
     protected void onDestroy() {
         Log.d(TAG, "destroy");
@@ -111,13 +144,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     /**
-     * starting the application by click on start button
+     * on-click function for start- and stop-button
      * @param view
      */
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.start:
+            case R.id.startButton:
                 Log.d(TAG, "start-button clicked");
                 this.start.setEnabled(false);
                 this.stop.setEnabled(true);
@@ -126,23 +159,26 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 this.recognitionService.startListening();
 
                 break;
-            case R.id.stop:
+            case R.id.stopButton:
                 Log.d(TAG, "start-button clicked");
-                this.stop.setEnabled(false);
-                this.start.setEnabled(true);
+                this.restart();
 
-                this.onDestroy();
                 break;
         }
     }
 
-    /*public static void changeInfoText(Activity activity, String s) {
-        TextView info = activity.findViewById(R.id.info);
+    /**
+     * function to change the info text on the start screen to the string s
+     * @param s
+     */
+    public void changeInfoText(String s) {
+        Log.d(TAG, "change info text");
+        TextView info = findViewById(R.id.infoText);
         info.setText(s);
-    }*/
+    }
 
     /**
-     * getting data (categories and showroom map) of the database
+     * get data (categories and showroom map) of the cms database
      */
     private void getData() {
         new Thread() {
@@ -158,7 +194,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     /**
-     * sending an email to sales man
+     * send email to salesman
      */
     public void sendMail(){
         Log.d(TAG, "starting mail method");
@@ -170,8 +206,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     GMailSender sender = new GMailSender("loomo.email@gmail.com",
                             "loomo@MBC");
                     sender.sendMail("Customer Request", "Hello, a customer has told Loomo, the Car Master, that he/sha wants to receive " +
-                                    "more information from a personal salesman. Please go to Loomo to serve the corresponding customer: " + customer.getFirstName() +
-                            customer.getLastName() + ".",
+                                    "more information from a personal salesman. Please go to Loomo to serve the corresponding custome.",
                             "loomo.email@gmail.com", "thomas.lehenberger@gmail.com");
                 } catch (Exception e) {
                     Log.e("SendMail", e.getMessage(), e);
@@ -181,7 +216,27 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }).start();
     }
 
+    /**
+     * restart the service by disconnecting from services, stop listening, cancel requests and reset everything else to null
+     */
+    public void restart() {
+        this.stop.setEnabled(false);
+        this.start.setEnabled(true);
+        this.baseService.disconnect();
+        this.speakService.disconnect();
+        this.recognitionService.stopListening();
+        this.recognitionService.disconnect();
+        this.requestHandler.cancelPendingRequests();
 
+        this.baseService = null;
+        this.recognitionService = null;
+        this.speakService = null;
+        this.requestHandler = null;
+
+        this.categories = null;
+        this.cars = null;
+        this.customer = null;
+    }
 }
 
 

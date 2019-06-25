@@ -1,7 +1,6 @@
 package com.segway.loomo.services;
 
 import android.content.Context;
-import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
 import com.segway.robot.sdk.base.bind.ServiceBinder;
@@ -9,14 +8,30 @@ import com.segway.robot.sdk.voice.Speaker;
 import com.segway.robot.sdk.voice.VoiceException;
 import com.segway.robot.sdk.voice.tts.TtsListener;
 
+/**
+ * class to provide the speech service and handle text to speech functionality
+ */
 public class SpeakService extends Service {
-
     private static final String TAG = "SpeakService";
+
+    /**
+     * the application context
+     */
     private Context context;
 
+    /**
+     * speaker instance
+     */
     private Speaker speaker;
+
+    /**
+     * speak service instance
+     */
     private static SpeakService instance;
 
+    /**
+     * tts listeners
+     */
     private TtsListener ttsListener;
 
 
@@ -45,7 +60,7 @@ public class SpeakService extends Service {
     }
 
     /**
-     * initialize speaker service
+     * initialize the speaker instance and set volume
      */
     @Override
     public void init() {
@@ -55,7 +70,7 @@ public class SpeakService extends Service {
             public void onBind() {
                 Log.d(TAG, "speaker service bound successfully");
                 try {
-                    speaker.setVolume(30);
+                    speaker.setVolume(50);
                 }
                 catch (VoiceException e) {
                     e.printStackTrace();
@@ -70,7 +85,7 @@ public class SpeakService extends Service {
     }
 
     /**
-     * initialize speaker listener
+     * initialize tts listener
      */
     public void initListeners() {
         this.ttsListener = new TtsListener() {
@@ -95,13 +110,13 @@ public class SpeakService extends Service {
     }
 
     /**
-     * speak function
+     * text to speech function
      * @param text
      */
     public void speak(String text) {
         try {
-            this.speaker.speak(text, this.ttsListener);
             Log.d(TAG, "before speak ");
+            this.speaker.speak(text, this.ttsListener);
             this.speaker.waitForSpeakFinish(10000);
             Log.d(TAG, "after speak ");
         }

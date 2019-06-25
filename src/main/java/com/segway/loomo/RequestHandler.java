@@ -22,12 +22,30 @@ import org.json.JSONObject;
  */
 public class RequestHandler {
     private static String TAG = "RequestHandler";
+
+    /**
+     * the application context
+     */
     private Context context;
 
+    /**
+     * request queue which contains the pending requests
+     */
     private static RequestQueue requestQueue;
+
+    /**
+     * request handler instance
+     */
     private static RequestHandler requestHandler;
 
+    /**
+     * the url of the cms to read data
+     */
     private String url = "https://loomo.exocreations.de/api/collections/get/%s?token=account-1d02ac9dab107851012a327336009c";
+
+    /**
+     * request body
+     */
     private String body = "{\"populate\":1}";
     private JSONObject jsonRequestBody;
 
@@ -168,7 +186,6 @@ public class RequestHandler {
      * class which defines the possible request types
      */
     public class Collection {
-        //public static final String CAR_MODELS = "carModels";
         public static final String CATEGORIES = "categories";
         public static final String SHOWROOM_MAP = "showroomMap";
     }
