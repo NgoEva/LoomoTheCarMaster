@@ -2,10 +2,8 @@ package com.segway.loomo.services;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.segway.loomo.MainActivity;
-import com.segway.loomo.R;
 import com.segway.loomo.objects.CarModel;
 import com.segway.loomo.objects.Category;
 import com.segway.loomo.objects.Customer;
@@ -35,8 +33,10 @@ public class RecognitionService extends Service {
 
     private GrammarConstraint yesNoGrammar;
     private GrammarConstraint carSelectionGrammar;
+    private GrammarConstraint modelSelectionGrammar;
     private GrammarConstraint questionInformationGrammar;
     private GrammarConstraint additionalConsultationGrammar;
+
 
     private boolean resetPosition;
     private boolean firstBind;
@@ -110,7 +110,7 @@ public class RecognitionService extends Service {
      */
     @Override
     public void initListeners(){
-
+        Log.i(TAG, "init listeners");
         this.recognitionListener = new RecognitionListener() {
             @Override
             public void onRecognitionStart() {
@@ -129,7 +129,7 @@ public class RecognitionService extends Service {
                     if (result.contains("yes") || result.contains("yeah") || result.contains("sure") || result.contains("of course")) {
                         Log.d(TAG, "customer is interested");
                         try {
-                            //recognizer.removeGrammarConstraint(yesNoGrammar);
+                            recognizer.removeGrammarConstraint(yesNoGrammar);
                             recognizer.addGrammarConstraint(carSelectionGrammar);
                         } catch (VoiceException e) {
                             Log.e(TAG, "Exception: ", e);
@@ -146,11 +146,11 @@ public class RecognitionService extends Service {
 
                     else if (result.contains("no") || result.contains("nope") || result.contains("nah")) {
                         Log.d(TAG, "customer not interested");
-                        /*try {
+                        try {
                             recognizer.removeGrammarConstraint(yesNoGrammar);
                         } catch (VoiceException e) {
                             Log.e(TAG, "Exception: ", e);
-                        }*/
+                        }
                         RecognitionService.getInstance().stopListening();
                         String text = "Alright. Thank you and have a nice day!";
                         //MainActivity.getInstance().changeInfoText(text);
@@ -175,6 +175,19 @@ public class RecognitionService extends Service {
 
                             // get the available car models of the car options
                             carModelOptions = RecognitionService.getInstance().getCarModelsOfCarOptions();
+
+                            Slot modelName = new Slot("model name", false, Arrays.asList("car", "model", "A class", "B class", "C class", "CLA", "CLS", "S class",
+                                    "E class", "G class", "GLA", "GLC","GLE","V class"));
+                            carSelectionGrammar.deleteSlot(2);
+                            carSelectionGrammar.addSlot(modelName);
+                            /*try {
+                                //recognizer.removeGrammarConstraint(carSelectionGrammar);
+                                carSelectionGrammar.deleteSlot(2);
+                                carSelectionGrammar.addSlot(modelName);
+                                //recognizer.addGrammarConstraint(modelSelectionGrammar);
+                            } catch (VoiceException e) {
+                                Log.e(TAG, "Exception: ", e);
+                            }*/
 
                             //prepare sentence to tell customer the available car models
                             String modelQuestion = buildModelString();
@@ -520,21 +533,25 @@ public class RecognitionService extends Service {
         Slot interest = new Slot( "interest ", false, Arrays.asList("Show me", "I would like to see", "Take me to", "Guide me to", "Can you show me",
                 "I want to see"));
         Slot article = new Slot("article", false, Arrays.asList("the", "this", "that", "a"));
-        Slot modelName = new Slot("model name", true, Arrays.asList("car", "model", "A class", "B class", "C class", "CLA", "CLS", "S class",
-                "E class", "G class", "GLA", "GLC","GLE","V class"));
-        Slot category = new Slot("category name", true, Arrays.asList("hatchback", "coupe", "saloon", "cabriolet", "SUV", "MPV"));
+
+        Slot category = new Slot("category name", false, Arrays.asList("hatchback", "coupe", "saloon", "cabriolet", "SUV", "MPV"));
 
         this.yesNoGrammar = new GrammarConstraint();
         this.yesNoGrammar.setName("yes no grammar");
-        this.yesNoGrammar.addSlot(new Slot("yes no", false, Arrays.asList("yes", "yeah", "sure", "of course", "no", "nah", "nope")));
-        this.yesNoGrammar.addSlot(new Slot("addition", true, Arrays.asList("please", "thanks")));
+        this.yesNoGrammar.addSlot(new Slot("yes", false, Arrays.asList("yes", "yeah", "sure", "of course", "no", "nah", "nope")));
+        //this.yesNoGrammar.addSlot(new Slot("addition", true, Arrays.asList("please", "thanks")));
 
         this.carSelectionGrammar = new GrammarConstraint();
         this.carSelectionGrammar.setName("car selection grammar");
         this.carSelectionGrammar.addSlot(interest);
         this.carSelectionGrammar.addSlot(article);
         this.carSelectionGrammar.addSlot(category);
-        this.carSelectionGrammar.addSlot(modelName);
+
+        //this.modelSelectionGrammar = new GrammarConstraint();
+        //this.modelSelectionGrammar.setName("model selection grammar");
+        //this.modelSelectionGrammar.addSlot(interest);
+        //this.modelSelectionGrammar.addSlot(article);
+        //this.modelSelectionGrammar.addSlot(modelName);
 
         this.questionInformationGrammar = new GrammarConstraint();
         this.questionInformationGrammar.setName("question information grammar");
@@ -542,7 +559,7 @@ public class RecognitionService extends Service {
         this.questionInformationGrammar.addSlot(new Slot("information type", false, Arrays.asList("general information about", "something about", "name of", "color of",
                 "seat number of", "power of", "maximum speed of", "transmission of", "fuel type of", "maximum fuel consumption of", "price of" )));
         this.questionInformationGrammar.addSlot(article);
-        this.questionInformationGrammar.addSlot(modelName);
+        //this.questionInformationGrammar.addSlot(modelName);
 
         this.additionalConsultationGrammar = new GrammarConstraint();
         this.additionalConsultationGrammar.setName("additional consultation grammar");

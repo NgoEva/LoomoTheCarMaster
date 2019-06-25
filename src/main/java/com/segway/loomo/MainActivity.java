@@ -136,6 +136,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     public static void changeInfoText(String s) {
+        Log.d(TAG, "change info text");
         //TextView info = findViewById(R.id.infoText);
         info.setText(s);
     }
