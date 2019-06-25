@@ -21,6 +21,11 @@ public class GMailSender extends javax.mail.Authenticator {
         Security.addProvider(new JSSEProvider());
     }
 
+    /**
+     * Dokumentation
+     * @param user
+     * @param password
+     */
     public GMailSender(String user, String password) {
         this.user = user;
         this.password = password;
@@ -38,10 +43,22 @@ public class GMailSender extends javax.mail.Authenticator {
         session = Session.getDefaultInstance(props, this);
     }
 
+    /**
+     * Dokumentation
+     * @return
+     */
     protected PasswordAuthentication getPasswordAuthentication() {
         return new PasswordAuthentication(user, password);
     }
 
+    /**
+     * Dokumentation
+     * @param subject
+     * @param body
+     * @param sender
+     * @param recipients
+     * @throws Exception
+     */
     public synchronized void sendMail(String subject, String body,
                                       String sender, String recipients) throws Exception {
         MimeMessage message = new MimeMessage(session);

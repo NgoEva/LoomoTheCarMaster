@@ -27,6 +27,10 @@ public class ContactFormActivity extends Activity implements View.OnClickListene
     private EditText zipCode;
     private EditText city;
 
+    /**
+     * initialize contact form activity
+     * @param savedInstanceState
+     */
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "initialize contact form activity");
         super.onCreate(savedInstanceState);
@@ -35,11 +39,18 @@ public class ContactFormActivity extends Activity implements View.OnClickListene
         this.initButtons();
 }
 
+
+    /**
+     * initialize send button
+     */
     private void initButtons() {
         this.send = findViewById(R.id.send);
         this.send.setOnClickListener(this);
     }
 
+    /**
+     * getting customer data
+     */
     public void getCustomerData () {
         firstName = findViewById(R.id.edit_first_name);
         lastName = findViewById(R.id.edit_last_name);
@@ -51,6 +62,10 @@ public class ContactFormActivity extends Activity implements View.OnClickListene
         city = findViewById(R.id.edit_city);
     }
 
+    /**
+     * check if all data has been entered
+     * @return
+     */
     private boolean checkInput() {
         getCustomerData();
         boolean inputCorrect = true;
@@ -79,6 +94,10 @@ public class ContactFormActivity extends Activity implements View.OnClickListene
         return inputCorrect;
     }
 
+    /**
+     * saving customer data by using the send button
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()) {

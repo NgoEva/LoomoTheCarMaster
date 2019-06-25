@@ -63,6 +63,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         return instance;
     }
 
+    /**
+     * initialize base, recognition, speak service and request service
+     */
     private void initServices(){
         Log.d(TAG, "init services");
         this.baseService = new BaseService(MainActivity.getInstance().getApplicationContext());
@@ -71,6 +74,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         this.requestHandler = new RequestHandler(MainActivity.getInstance().getApplicationContext());
     }
 
+    /**
+     * initialize layout elements like buttons and text views
+     */
     private void initLayoutElements() {
         Log.d(TAG, "init buttons");
         this.start = findViewById(R.id.start);
@@ -84,11 +90,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
         this.stop.setEnabled(false);
     }
 
+    /**
+     * switching the screen between starting page and contact form
+     */
     public void switchScreen() {
         Intent nextScreen = new Intent(MainActivity.getInstance().getApplicationContext(), ContactFormActivity.class);
         startActivity(nextScreen);
     }
 
+    /**
+     * disconnecting base, recognition, speak service and request handler
+     */
     protected void onDestroy() {
         Log.d(TAG, "destroy");
         super.onDestroy();
@@ -98,6 +110,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         this.requestHandler.cancelPendingRequests();
     }
 
+    /**
+     * starting the application by click on start button
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -125,6 +141,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         info.setText(s);
     }*/
 
+    /**
+     * getting data (categories and showroom map) of the database
+     */
     private void getData() {
         new Thread() {
             @Override
@@ -138,6 +157,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }.start();
     }
 
+    /**
+     * sending an email to sales man
+     */
     public void sendMail(){
         Log.d(TAG, "starting mail method");
         new Thread(new Runnable() {

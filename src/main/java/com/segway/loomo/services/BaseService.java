@@ -26,6 +26,11 @@ public class BaseService extends Service {
     private CheckPointStateListener checkpointListener;
     private ObstacleStateChangedListener obstacleStateChangedListener;
 
+
+    /**
+     * returns the base instance
+     * @return BaseService
+     */
     public static BaseService getInstance() {
         Log.d(TAG, "get base instance");
         if (instance == null) {
@@ -34,6 +39,11 @@ public class BaseService extends Service {
         return instance;
     }
 
+
+    /**
+     * constructor to initialize the base service
+     * @param context
+     */
     public BaseService(Context context) {
         Log.d(TAG, "base service initiated");
         this.context = context;
@@ -42,6 +52,9 @@ public class BaseService extends Service {
         this.initListeners();
     }
 
+    /**
+     * initialize the base instance
+     */
     @Override
     public void init() {
         this.base = Base.getInstance();
@@ -59,6 +72,9 @@ public class BaseService extends Service {
         });
     }
 
+    /**
+     * initialize the base listener
+     */
     @Override
     public void initListeners() {
         this.startVlsListener = new StartVLSListener() {
@@ -98,6 +114,9 @@ public class BaseService extends Service {
         };
     }
 
+    /**
+     * disconnect the base service
+     */
     @Override
     public void disconnect() {
         Log.d(TAG, "unbind base service");
@@ -105,6 +124,9 @@ public class BaseService extends Service {
     }
 
 
+    /**
+     * reset of original position
+     */
     public void resetPosition() {
         Log.d(TAG, "reset original point");
         this.base.startVLS(true, true, this.startVlsListener);
@@ -113,6 +135,11 @@ public class BaseService extends Service {
         this.base.setOriginalPoint(pose2D);
     }
 
+    /**
+     * start of navigation to the specified position
+     * @param resetPosition
+     * @param spot
+     */
     public void startNavigation(boolean resetPosition, Spot spot) {
         Log.i(TAG, "start navigation");
         if (resetPosition) this.resetPosition();
@@ -121,6 +148,9 @@ public class BaseService extends Service {
         this.base.addCheckPoint(spot.getX_coordinate(), spot.getY_coordinate());
     }
 
+    /**
+     * initial & starting VLS, set up On Check Point Arrived Listener, set up Obstacle Avoidance
+     */
     private void setupNavigationVLS() {
         if (!this.base.isVLSStarted()) {
             Log.d(TAG, "starting VLS");

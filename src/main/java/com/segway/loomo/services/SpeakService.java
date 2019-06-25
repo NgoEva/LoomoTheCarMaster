@@ -19,6 +19,11 @@ public class SpeakService extends Service {
 
     private TtsListener ttsListener;
 
+
+    /**
+     * returns the speak instance
+     * @return SpeakService
+     */
     public static SpeakService getInstance() {
         Log.d(TAG, "get speaker instance");
         if (instance == null) {
@@ -27,6 +32,10 @@ public class SpeakService extends Service {
         return instance;
     }
 
+    /**
+     * constructor to initialize the speak service
+     * @param context
+     */
     public SpeakService(Context context) {
         Log.d(TAG, "speaker service initiated");
         this.context = context;
@@ -35,6 +44,9 @@ public class SpeakService extends Service {
         this.initListeners();
     }
 
+    /**
+     * initialize speaker service
+     */
     @Override
     public void init() {
         this.speaker = Speaker.getInstance();
@@ -57,6 +69,9 @@ public class SpeakService extends Service {
         });
     }
 
+    /**
+     * initialize speaker listener
+     */
     public void initListeners() {
         this.ttsListener = new TtsListener() {
             @Override
@@ -79,6 +94,10 @@ public class SpeakService extends Service {
         };
     }
 
+    /**
+     * speak function
+     * @param text
+     */
     public void speak(String text) {
         try {
             this.speaker.speak(text, this.ttsListener);
@@ -91,6 +110,9 @@ public class SpeakService extends Service {
         }
     }
 
+    /**
+     * disconnect the speaker service
+     */
     public void disconnect() {
         Log.d(TAG, "unbind speaker service");
         this.speaker.unbindService();
