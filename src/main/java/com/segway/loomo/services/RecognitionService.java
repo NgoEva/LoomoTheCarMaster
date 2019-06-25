@@ -20,6 +20,7 @@ import com.segway.robot.sdk.voice.recognition.RecognitionResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * class to provide the recognition service and handle recognition results
@@ -54,6 +55,12 @@ public class RecognitionService extends Service {
     private GrammarConstraint carSelectionGrammar;
     private GrammarConstraint questionInformationGrammar;
     private GrammarConstraint additionalConsultationGrammar;
+
+    /**
+     * yes and no command list
+     */
+    private List<String> yesCommandList;
+    private List<String> noCommandList;
 
     /**
      * boolean to track whether postion should be resetted to get the origin point for orientation
@@ -99,6 +106,9 @@ public class RecognitionService extends Service {
         this.initListeners();
 
         this.resetPosition = true;
+
+        this.yesCommandList = Arrays.asList("yes", "yeah", "sure", "of course", "yes please");
+        this.noCommandList = Arrays.asList("no", "nah", "nope", "no thanks");
     }
 
     /*public void updateInfo(String s){
@@ -159,7 +169,7 @@ public class RecognitionService extends Service {
                 if (dialogueStatus.equals(DialogueStatus.START_DIALOGUE)) {
 
                     //handle if customer is interested and wants to see the cars in the car showroom
-                    if (result.contains("yes") || result.contains("yeah") || result.contains("sure") || result.contains("of course")) {
+                    if (isCommand(result, yesCommandList)) {
                         Log.d(TAG, "customer is interested");
                         try {
                             recognizer.removeGrammarConstraint(yesNoGrammar);
@@ -179,7 +189,7 @@ public class RecognitionService extends Service {
                     }
 
                     // handle if customer is not interested and does not want to see the cars in the car showroom
-                    else if (result.contains("no") || result.contains("nope") || result.contains("nah")) {
+                    else if (isCommand(result, noCommandList)) {
                         Log.d(TAG, "customer not interested");
                         try {
                             recognizer.removeGrammarConstraint(yesNoGrammar);
@@ -343,7 +353,7 @@ public class RecognitionService extends Service {
                 else if (dialogueStatus.equals(DialogueStatus.MORE_INFORMATION)) {
 
                     // handle if customer does not want to receive more information about the car
-                    if (result.contains("no") || result.contains("nope") || result.contains("nah")) {
+                    if (isCommand(result, noCommandList)) {
                         Log.d(TAG, "customer does not want to receive more information");
                         try {
                             recognizer.removeGrammarConstraint(questionInformationGrammar);
@@ -358,7 +368,7 @@ public class RecognitionService extends Service {
                     }
 
                     // handle if customer wants to receive more information about the car
-                    else if (result.contains("yes") || result.contains("yeah") || result.contains("sure") || result.contains("of course")) {
+                    else if (isCommand(result, yesCommandList)) {
                         Log.d(TAG, "customer wants to receive more information");
                         try {
                             recognizer.removeGrammarConstraint(yesNoGrammar);
@@ -379,7 +389,7 @@ public class RecognitionService extends Service {
                 else if (dialogueStatus.equals(DialogueStatus.NEXT_CAR)) {
 
                     // handle if customer does not want to see another car
-                    if (result.contains("no") || result.contains("nope") || result.contains("nah")) {
+                    if (isCommand(result, noCommandList)) {
                         Log.d(TAG, "customer does not want to see another car");
                         String text = "Alright. If you have more questions, you could talk to a human salesman now. Should I call someone?";
                         //MainActivity.getInstance().changeInfoText(text);
@@ -389,7 +399,7 @@ public class RecognitionService extends Service {
                     }
 
                     // handle if customer wants to see another car
-                    else if (result.contains("yes") || result.contains("yeah") || result.contains("sure") || result.contains("of course")) {
+                    else if (isCommand(result, yesCommandList)) {
                         Log.d(TAG, "customer wants to see another car");
                         try {
                             recognizer.removeGrammarConstraint(yesNoGrammar);
@@ -411,7 +421,7 @@ public class RecognitionService extends Service {
                 else if (dialogueStatus.equals(DialogueStatus.CALL_SALESMAN)) {
 
                     // handle if customer does not want to call a salesman
-                    if (result.contains("no") || result.contains("nope") || result.contains("nah")) {
+                    if (isCommand(result, noCommandList)) {
                         Log.d(TAG, "customer does not want to call a salesman");
                         try {
                             recognizer.addGrammarConstraint(additionalConsultationGrammar);
@@ -427,7 +437,7 @@ public class RecognitionService extends Service {
                     }
 
                     // handle if customer wants to call a salesman
-                    else if (result.contains("yes") || result.contains("yeah") || result.contains("sure") || result.contains("of course")) {
+                    else if (isCommand(result, yesCommandList)) {
                         Log.d(TAG, "customer wants to call a salesman");
                         try {
                             recognizer.removeGrammarConstraint(yesNoGrammar);
@@ -449,7 +459,7 @@ public class RecognitionService extends Service {
                 else if (dialogueStatus.equals(DialogueStatus.ADDITIONAL_CONSULTATION)) {
 
                     // handle if customer does not want additional consultation
-                    if (result.contains("no") || result.contains("nope") || result.contains("nah")) {
+                    if (isCommand(result, noCommandList)) {
                         Log.d(TAG, "customer does not want to additional consultation");
                         try {
                             recognizer.removeGrammarConstraint(yesNoGrammar);
@@ -465,7 +475,7 @@ public class RecognitionService extends Service {
                     }
 
                     // handle if customer wants additional consultation
-                    else if (result.contains("offer") || result.contains("phone call") || result.contains("test drive")) {
+                    else if (isCommand(result, yesCommandList)) {
                         Log.d(TAG, "customer wants additional consultation");
                         MainActivity.getInstance().customer = new Customer();
                         try {
@@ -500,7 +510,7 @@ public class RecognitionService extends Service {
                     boolean shouldRemove = false;
 
                     // handle if customer allows to collect customer data
-                    if (result.contains("yes") || result.contains("yeah") || result.contains("sure") || result.contains("of course")) {
+                    if (isCommand(result, yesCommandList)) {
                         shouldRemove = true;
                         String text = "Please enter your contact information on the screen and confirm.";
                         //MainActivity.getInstance().changeInfoText(text);
@@ -509,7 +519,7 @@ public class RecognitionService extends Service {
                     }
 
                     // handle if customer does not allow to collect customer data
-                    else if (result.contains("no") || result.contains("nope") || result.contains("nah")) {
+                    else if (isCommand(result, noCommandList)) {
                         shouldRemove = true;
                         String text = "Okay. We are sorry that we cannot offer you additional consultation without your contact information. Thank you and see you next time!";
                         //MainActivity.getInstance().changeInfoText(text);
@@ -585,6 +595,21 @@ public class RecognitionService extends Service {
         catch (VoiceException e) {
             Log.w(TAG, "Exception: ", e);
         }
+    }
+
+    /**
+     * check if the the recognition result contains a string of the given command list
+     * @param recognition
+     * @param commandList
+     * @return true if the result is a command, false if not
+     */
+    private static boolean isCommand(String recognition, List<String> commandList) {
+        for (String value : commandList) {
+            if (recognition.toLowerCase().contains(value.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
