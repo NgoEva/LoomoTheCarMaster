@@ -1,10 +1,18 @@
 package com.segway.loomo.objects;
 
 /**
- * class which represents an object in the car showroom, it includes the Car object and its respective Spot object
+ * class which represents an map item in the car showroom, it includes the Car object and its respective Spot object
  */
 public class MapObject extends AppObject{
+
+    /**
+     * the car of the map item
+     */
     private Car car;
+
+    /**
+     * the respective spot of the map item
+     */
     private Spot spot;
 
     /**

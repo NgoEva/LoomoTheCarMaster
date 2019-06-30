@@ -1,7 +1,13 @@
 package com.segway.loomo.objects;
 
+/**
+ * class which represents a car category that the customer can select from, e.g. Hatchback, Saloon, ...
+ */
 public class Category extends AppObject {
 
+    /**
+     * the category name
+     */
     private String name;
 
     /**
@@ -13,7 +19,7 @@ public class Category extends AppObject {
     }
 
     /**
-     * getter function to get the name of the category object
+     * getter function to get the category name
      * @return name
      */
     public String getName() {
@@ -21,7 +27,7 @@ public class Category extends AppObject {
     }
 
     /**
-     * setter function to set the name of the category object
+     * setter function to set the category name
      * @param name
      */
     public void setName(String name) {

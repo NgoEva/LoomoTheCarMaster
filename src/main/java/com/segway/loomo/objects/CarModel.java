@@ -1,5 +1,8 @@
 package com.segway.loomo.objects;
 
+/**
+ * class which represents a car model that the customer can select from, e.g. A-Class, B-Class, etc.
+ */
 public class CarModel extends AppObject {
     private String name;
 
