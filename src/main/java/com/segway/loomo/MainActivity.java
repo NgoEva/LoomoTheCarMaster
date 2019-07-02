@@ -51,7 +51,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
      */
     private Button start;
     private Button stop;
-    public static TextView info;
+    public TextView info;
 
     /**
      * available categories requested from the database
@@ -131,8 +131,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         startActivity(nextScreen);
     }
 
-
-
     /**
      * disconnect base, recognition, speak service and request handler and destroy application
      */
@@ -163,7 +161,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.stopButton:
                 Log.d(TAG, "start-button clicked");
-                this.restart();
+                this.restart(true);
 
                 break;
         }
@@ -175,8 +173,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
      */
     public void changeInfoText(String s) {
         Log.d(TAG, "change info text");
-        TextView info = findViewById(R.id.infoText);
-        info.setText(s);
+        this.info.setText(s);
     }
 
     /**
@@ -207,9 +204,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 try {
                     GMailSender sender = new GMailSender("loomo.email@gmail.com",
                             "loomo@MBC");
-                    sender.sendMail("Customer Request", "Hello, a customer has told Loomo, the Car Master, that he/sha wants to receive " +
-                                    "more information from a personal salesman. Please go to Loomo to serve the corresponding custome.",
-                            "loomo.email@gmail.com", "thomas.lehenberger@gmail.com");
+                    sender.sendMail("Customer Request", "Hello, a customer has told Loomo, the Car Master, that he/she wants to receive " +
+                                    "more information from a personal salesman. Please go to Loomo to serve the corresponding customer.",
+                            "loomo.email@gmail.com", "eva.ngo@web.de");
                 } catch (Exception e) {
                     Log.e("SendMail", e.getMessage(), e);
                 }
@@ -221,23 +218,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
     /**
      * restart the service by disconnecting from services, stop listening, cancel requests and reset everything else to null
      */
-    public void restart() {
-        this.stop.setEnabled(false);
-        this.start.setEnabled(true);
-        this.baseService.disconnect();
-        this.speakService.disconnect();
+    public void restart(boolean enablestop) {
+        if (enablestop) enableStopButton();
         this.recognitionService.stopListening();
-        this.recognitionService.disconnect();
         this.requestHandler.cancelPendingRequests();
-
-        this.baseService = null;
-        this.recognitionService = null;
-        this.speakService = null;
-        this.requestHandler = null;
 
         this.categories = null;
         this.cars = null;
         this.customer = null;
+    }
+
+    public void enableStopButton() {
+        this.stop.setEnabled(false);
+        this.start.setEnabled(true);
     }
 }
 
