@@ -125,7 +125,7 @@ public class ContactFormActivity extends Activity implements View.OnClickListene
     }
 
     public void switchToMainActivityScreen() {
-        MainActivity.getInstance().restart(false);
+        MainActivity.getInstance().completeRestart();
         Intent nextScreen = new Intent(this.getApplicationContext(), MainActivity.class);
         startActivity(nextScreen);
     }

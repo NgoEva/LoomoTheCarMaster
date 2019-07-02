@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.segway.loomo.MainActivity;
 import com.segway.loomo.R;
+import com.segway.loomo.objects.CarModel;
 import com.segway.loomo.objects.Category;
 import com.segway.loomo.objects.Customer;
 import com.segway.loomo.objects.MapObject;
@@ -52,7 +53,8 @@ public class RecognitionService extends Service {
      * grammar constraints for speech recognition
      */
     private GrammarConstraint yesNoGrammar;
-    private GrammarConstraint carSelectionGrammar;
+    private GrammarConstraint categorySelectionGrammar;
+    private GrammarConstraint modelSelectionGrammar;
     private GrammarConstraint questionInformationGrammar;
     private GrammarConstraint additionalConsultationGrammar;
 
@@ -73,11 +75,15 @@ public class RecognitionService extends Service {
     private ArrayList<MapObject> carOptions;
 
     /**
+     * arraylist to hold the available car models of the cars in the car showroom
+     */
+    private ArrayList<CarModel> carModelOptions;
+
+    /**
      * selected map object to navigate to and to show the customer
      */
     private MapObject selectedMapObject;
 
-    public TextView info;
     /**
      * returns the recognizer instance
      * @return RecognitionService
@@ -153,7 +159,7 @@ public class RecognitionService extends Service {
                         Log.d(TAG, "customer is interested");
                         try {
                             recognizer.removeGrammarConstraint(yesNoGrammar);
-                            recognizer.addGrammarConstraint(carSelectionGrammar);
+                            recognizer.addGrammarConstraint(categorySelectionGrammar);
                         } catch (VoiceException e) {
                             Log.e(TAG, "Exception: ", e);
                         }
@@ -198,21 +204,20 @@ public class RecognitionService extends Service {
                             // filter map objects by selected category to have the car options for the customer
                             carOptions = RecognitionService.getInstance().filterMapObjectsByCategory(cat);
 
+                            // get the available car models of the car options
+                            carModelOptions = RecognitionService.getInstance().getCarModelsOfCarOptions();
+
                             try {
-                                recognizer.removeGrammarConstraint(carSelectionGrammar);
-                                recognizer.addGrammarConstraint(questionInformationGrammar);
+                                recognizer.removeGrammarConstraint(categorySelectionGrammar);
+                                recognizer.addGrammarConstraint(modelSelectionGrammar);
                             } catch (VoiceException e) {
                                 Log.e(TAG, "Exception: ", e);
                             }
 
-                            selectedMapObject = carOptions.get(0);
-
-                            String text = "Okay! Follow me, I’ll show you the car: " + selectedMapObject.getCar().getName();
-                            //MainActivity.getInstance().changeInfoText(text);
-                            SpeakService.getInstance().speak(text);
-
-                            // guide customer to the selected car
-                            BaseService.getInstance().startNavigation(selectedMapObject.getSpot());
+                            //prepare sentence to tell customer the available car models
+                            String modelQuestion = buildModelString();
+                            //MainActivity.getInstance().changeInfoText(modelQuestion);
+                            SpeakService.getInstance().speak(modelQuestion);
 
                             dialogueStatus = DialogueStatus.CATEGORY_SELECTED;
                         }
@@ -224,8 +229,45 @@ public class RecognitionService extends Service {
                     return true;
                 }
 
-                // handle questions regarding car information
+                // handle car model selection
                 else if (dialogueStatus.equals(DialogueStatus.CATEGORY_SELECTED)) {
+                    Log.d(TAG, "customer is selecting car model");
+                    boolean modelFound = false;
+
+                    // loop through the car models of the car options to check which car model the customer selected
+                    for (MapObject obj : carOptions) {
+                        CarModel model = obj.getCar().getCarModel();
+                        if (result.toLowerCase().contains(model.getName().toLowerCase())) {
+                            Log.d(TAG, model.getName() + " is selected");
+                            try {
+                                modelFound = true;
+
+                                selectedMapObject = obj;
+                                recognizer.removeGrammarConstraint(modelSelectionGrammar);
+                                recognizer.addGrammarConstraint(questionInformationGrammar);
+                            } catch (VoiceException e) {
+                                Log.e(TAG, "Exception: ", e);
+                            }
+                            String text = "Okay! Follow me, I’ll show you the car: " + selectedMapObject.getCar().getName();
+                            //MainActivity.getInstance().changeInfoText(text);
+                            SpeakService.getInstance().speak(text);
+
+                            // guide customer to the selected car
+                            BaseService.getInstance().startNavigation(selectedMapObject.getSpot());
+
+                            dialogueStatus = DialogueStatus.MODEL_SELECTED;
+                        }
+                    }
+                    if (!modelFound) {
+                        Log.d(TAG, "model not found");
+                        return true;
+                    }
+                    return true;
+                }
+
+
+                // handle questions regarding car information
+                else if (dialogueStatus.equals(DialogueStatus.MODEL_SELECTED)) {
                     Log.d(TAG, "customer is asking information");
 
                     // handle if customer wants to receive general information about the car
@@ -353,7 +395,7 @@ public class RecognitionService extends Service {
                         String text = "Okay, ask me another question.";
                         //MainActivity.getInstance().changeInfoText(text);
                         SpeakService.getInstance().speak(text);
-                        dialogueStatus = DialogueStatus.CATEGORY_SELECTED;
+                        dialogueStatus = DialogueStatus.MODEL_SELECTED;
                         return true;
                     }
                     return true;
@@ -377,7 +419,7 @@ public class RecognitionService extends Service {
                         Log.d(TAG, "customer wants to see another car");
                         try {
                             recognizer.removeGrammarConstraint(yesNoGrammar);
-                            recognizer.addGrammarConstraint(carSelectionGrammar);
+                            recognizer.addGrammarConstraint(categorySelectionGrammar);
                         } catch (VoiceException e) {
                             Log.e(TAG, "Exception: ", e);
                         }
@@ -534,23 +576,32 @@ public class RecognitionService extends Service {
         Slot article = new Slot("article", false, Arrays.asList("the", "this", "that", "a", "an"));
 
         Slot category = new Slot("category name", false, Arrays.asList("hatchback", "coupe", "saloon", "cabriolet", "SUV", "MPV"));
+        Slot modelName = new Slot("model name", true, Arrays.asList("car", "model", "A class", "B class", "C class", "CLA", "CLS", "S class",
+                "E class", "G class", "GLA", "GLC","GLE","V class"));
+
 
         this.yesNoGrammar = new GrammarConstraint();
         this.yesNoGrammar.setName("yes no grammar");
         this.yesNoGrammar.addSlot(new Slot("yes", false, Arrays.asList("yes", "yes please", "yeah", "sure", "of course", "no", "no thanks", "nah", "nope")));
 
-        this.carSelectionGrammar = new GrammarConstraint();
-        this.carSelectionGrammar.setName("car selection grammar");
-        this.carSelectionGrammar.addSlot(interest);
-        this.carSelectionGrammar.addSlot(article);
-        this.carSelectionGrammar.addSlot(category);
+        this.categorySelectionGrammar = new GrammarConstraint();
+        this.categorySelectionGrammar.setName("car selection grammar");
+        this.categorySelectionGrammar.addSlot(interest);
+        this.categorySelectionGrammar.addSlot(article);
+        this.categorySelectionGrammar.addSlot(category);
+
+        this.modelSelectionGrammar = new GrammarConstraint();
+        this.modelSelectionGrammar.setName("model selection grammar");
+        this.modelSelectionGrammar.addSlot(interest);
+        this.modelSelectionGrammar.addSlot(article);
+        this.modelSelectionGrammar.addSlot(modelName);
 
         this.questionInformationGrammar = new GrammarConstraint();
         this.questionInformationGrammar.setName("question information grammar");
         this.questionInformationGrammar.addSlot(new Slot("question", false, Arrays.asList("what is the", "tell me", "tell me the")));
         this.questionInformationGrammar.addSlot(new Slot("information type", false, Arrays.asList("general information about", "something about", "name", "color",
                 "seat number", "power", "maximum speed", "transmission", "fuel type", "maximum fuel consumption", "price" )));
-        this.questionInformationGrammar.addSlot(new Slot("car", false, Arrays.asList("of the car", "of this car", "this car", "the car")));
+        this.questionInformationGrammar.addSlot(new Slot("car", true, Arrays.asList("of the car", "of this car", "this car", "the car")));
 
         this.additionalConsultationGrammar = new GrammarConstraint();
         this.additionalConsultationGrammar.setName("additional consultation grammar");
@@ -611,6 +662,27 @@ public class RecognitionService extends Service {
     }
 
     /**
+     * prepare the model question to ask which car model the customer is interested in
+     * @return string
+     */
+    public String buildModelString() {
+        StringBuilder builder = new StringBuilder();
+
+        for (CarModel model : carModelOptions) {
+            if (builder.length() == 0) {
+                builder.append("Alright. Please tell me which model I should show you. Available models for this category are: ");
+                builder.append(model.getName());
+            }
+            else {
+                builder.append(", " + model.getName());
+            }
+        }
+        builder.append(".");
+        String string = builder.toString();
+        return string;
+    }
+
+    /**
      * filter the map objects by the given category and add them to the optionsCar arraylist
      * @param cat
      * @return filtered list of cars which represent the options of the customer
@@ -624,6 +696,29 @@ public class RecognitionService extends Service {
             }
         }
         return carObjects;
+    }
+
+    /**
+     * get the distinct car models of the car options
+     * @return available car models of the filtered car options
+     */
+    private ArrayList<CarModel> getCarModelsOfCarOptions() {
+        ArrayList<CarModel> models = new ArrayList<>();
+        for (MapObject obj : carOptions) {
+            CarModel objCarModel = obj.getCar().getCarModel();
+            boolean shouldPush = true;
+            if (!models.isEmpty()) {
+                for (CarModel model : models) {
+                    if (objCarModel.getName().equals(model.getName())) {
+                        shouldPush = false;
+                    }
+                }
+            }
+            if (shouldPush) {
+                models.add(objCarModel);
+            }
+        }
+        return models;
     }
 
     /**
@@ -654,6 +749,6 @@ public class RecognitionService extends Service {
      *  enum class which defines the dialogue status possibilities
      */
     private enum DialogueStatus {
-        BEGINNING, START_DIALOGUE, CUSTOMER_INTERESTED, CATEGORY_SELECTED, NEXT_CAR, MORE_INFORMATION, CALL_SALESMAN, ADDITIONAL_CONSULTATION, CONTACT_INFORMATION
+        BEGINNING, START_DIALOGUE, CUSTOMER_INTERESTED, CATEGORY_SELECTED, MODEL_SELECTED, NEXT_CAR, MORE_INFORMATION, CALL_SALESMAN, ADDITIONAL_CONSULTATION, CONTACT_INFORMATION
     }
 }

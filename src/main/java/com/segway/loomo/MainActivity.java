@@ -228,6 +228,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
         this.customer = null;
     }
 
+    public void completeRestart() {
+        this.recognitionService.stopListening();
+        this.requestHandler.cancelPendingRequests();
+
+        this.recognitionService.disconnect();
+        this.speakService.disconnect();
+        this.baseService.disconnect();
+
+        this.requestHandler = null;
+        this.recognitionService = null;
+        this.speakService = null;
+
+        this.categories = null;
+        this.cars = null;
+        this.customer = null;
+    }
+
     public void enableStopButton() {
         this.stop.setEnabled(false);
         this.start.setEnabled(true);

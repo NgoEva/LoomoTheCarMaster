@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_general_margin"
         android:layout_weight="0"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/start_button_color"
         android:text="@string/start"
         android:textColor="@color/colorWhite" />
 
@@ -46,6 +46,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_general_margin"
         android:layout_weight="0"
-        android:text="@string/stop" />
+        android:background="@drawable/stop_button_color"
+        android:text="@string/stop"
+        android:textColor="@android:color/white" />
 
 </LinearLayout>
