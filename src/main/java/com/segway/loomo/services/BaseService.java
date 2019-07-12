@@ -164,6 +164,15 @@ public class BaseService extends Service {
         Log.i(TAG, "start navigation");
         this.setupNavigationVLS();
         Log.i(TAG, "Moving to: " + spot.getX_coordinate() + spot.getY_coordinate());
+        /*float theta = this.base.getVLSPose(-1).getTheta();
+        Log.d(TAG,  Float.toString(theta));
+        float pi = (float) Math.PI;
+        float newTheta = Math.abs(theta) - pi;
+        if (theta < 0) {
+            newTheta = -newTheta;
+        }
+        Log.d(TAG, Float.toString(newTheta));
+        this.base.addCheckPoint(spot.getX_coordinate(), spot.getY_coordinate(), newTheta);*/
         this.base.addCheckPoint(spot.getX_coordinate(), spot.getY_coordinate());
     }
 

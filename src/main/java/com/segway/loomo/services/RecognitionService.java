@@ -18,6 +18,8 @@ import com.segway.robot.sdk.voice.grammar.GrammarConstraint;
 import com.segway.robot.sdk.voice.grammar.Slot;
 import com.segway.robot.sdk.voice.recognition.RecognitionListener;
 import com.segway.robot.sdk.voice.recognition.RecognitionResult;
+import com.segway.robot.sdk.voice.recognition.WakeupListener;
+import com.segway.robot.sdk.voice.recognition.WakeupResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +50,11 @@ public class RecognitionService extends Service {
      * recognition listener
      */
     private RecognitionListener recognitionListener;
+
+    /**
+     * wake up listener
+     */
+    private WakeupListener wakeupListener;
 
     /**
      * grammar constraints for speech recognition
@@ -123,6 +130,7 @@ public class RecognitionService extends Service {
             public void onBind() {
                 Log.d(TAG, "recognizer service bound successfully");
                 RecognitionService.getInstance().initControlGrammar();
+                RecognitionService.getInstance().startWakeUp();
             }
 
             @Override
@@ -138,6 +146,26 @@ public class RecognitionService extends Service {
     @Override
     public void initListeners(){
         Log.i(TAG, "init listeners");
+
+        this.wakeupListener = new WakeupListener() {
+            @Override
+            public void onStandby() {
+                Log.i(TAG, "in Standby");
+            }
+
+            @Override
+            public void onWakeupResult(WakeupResult wakeupResult) {
+                Log.i(TAG, "got wakeup result: " + wakeupResult);
+                SpeakService.getInstance().speak("Hello, I am Loomo, the Car Master. Do you want to know something about our cars?");
+                RecognitionService.getInstance().startListening();
+            }
+
+            @Override
+            public void onWakeupError(String error) {
+                Log.i(TAG, "got wakeup error: " + error);
+            }
+        };
+
         this.recognitionListener = new RecognitionListener() {
             @Override
             public void onRecognitionStart() {
@@ -611,6 +639,20 @@ public class RecognitionService extends Service {
     }
 
     /**
+     *  start the wakeup
+     */
+    public void startWakeUp() {
+        Log.d(TAG, "start listening");
+        this.dialogueStatus = DialogueStatus.WAKE_UP;
+        try {
+            this.recognizer.startWakeupMode(wakeupListener);
+        }
+        catch (VoiceException e) {
+            Log.w(TAG, "Exception: ", e);
+        }
+    }
+
+    /**
      *  start the recognition
      */
     public void startListening() {
@@ -749,6 +791,6 @@ public class RecognitionService extends Service {
      *  enum class which defines the dialogue status possibilities
      */
     private enum DialogueStatus {
-        BEGINNING, START_DIALOGUE, CUSTOMER_INTERESTED, CATEGORY_SELECTED, MODEL_SELECTED, NEXT_CAR, MORE_INFORMATION, CALL_SALESMAN, ADDITIONAL_CONSULTATION, CONTACT_INFORMATION
+        BEGINNING, WAKE_UP, START_DIALOGUE, CUSTOMER_INTERESTED, CATEGORY_SELECTED, MODEL_SELECTED, NEXT_CAR, MORE_INFORMATION, CALL_SALESMAN, ADDITIONAL_CONSULTATION, CONTACT_INFORMATION
     }
 }
