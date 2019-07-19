@@ -43,7 +43,8 @@ public class BaseService extends Service {
     private CheckPointStateListener checkpointListener;
     private ObstacleStateChangedListener obstacleStateChangedListener;
 
-    private boolean firstNavigation;
+    private boolean firstNavigation = true;
+    private boolean giveCheckpointInformation = false;
 
 
     /**
@@ -83,7 +84,7 @@ public class BaseService extends Service {
                 base.setControlMode(Base.CONTROL_MODE_NAVIGATION);
                 base.startVLS(true, true, startVlsListener);
 
-                firstNavigation = true;
+                //firstNavigation = true;
             }
 
             @Override
@@ -115,9 +116,17 @@ public class BaseService extends Service {
         this.checkpointListener = new CheckPointStateListener() {
             public void onCheckPointArrived(CheckPoint checkPoint, final Pose2D realPose, boolean isLast) {
                 Log.i(TAG, "Arrived to checkpoint: " + checkPoint);
-                String text = "Okay, here we are. I can start with general information about the car or you can ask me a particular question.";
-                //MainActivity.getInstance().changeInfoText(text);
-                SpeakService.getInstance().speak(text);
+
+                if (giveCheckpointInformation != true) {
+                    turn180degrees();
+                    giveCheckpointInformation = true;
+                }
+                else {
+                    String text = "Okay, here we are. I can start with general information about the car or you can ask me a particular question.";
+                    //MainActivity.getInstance().changeInfoText(text);
+                    SpeakService.getInstance().speak(text);
+                    giveCheckpointInformation = false;
+                }
             }
 
             @Override
@@ -163,8 +172,17 @@ public class BaseService extends Service {
     public void startNavigation(Spot spot) {
         Log.i(TAG, "start navigation");
         this.setupNavigationVLS();
-        Log.i(TAG, "Moving to: " + spot.getX_coordinate() + spot.getY_coordinate());
-        /*float theta = this.base.getVLSPose(-1).getTheta();
+        Log.i(TAG, "Moving to: " + spot.getX_coordinate() + " " + spot.getY_coordinate());
+
+        this.base.addCheckPoint(spot.getX_coordinate(), spot.getY_coordinate());
+    }
+
+    /**
+     * turn loomo 180 degrees to face the customer again after arriving to the car showroom spot
+     */
+    public void turn180degrees() {
+        Log.i(TAG, "turn 180 degrees");
+        float theta = this.base.getVLSPose(-1).getTheta();
         Log.d(TAG,  Float.toString(theta));
         float pi = (float) Math.PI;
         float newTheta = Math.abs(theta) - pi;
@@ -172,8 +190,7 @@ public class BaseService extends Service {
             newTheta = -newTheta;
         }
         Log.d(TAG, Float.toString(newTheta));
-        this.base.addCheckPoint(spot.getX_coordinate(), spot.getY_coordinate(), newTheta);*/
-        this.base.addCheckPoint(spot.getX_coordinate(), spot.getY_coordinate());
+        this.base.addCheckPoint(base.getVLSPose(-1).getX(), base.getVLSPose(-1).getY(), newTheta);
     }
 
     /**

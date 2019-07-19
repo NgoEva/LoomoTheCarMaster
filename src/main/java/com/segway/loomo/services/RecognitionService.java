@@ -1,12 +1,9 @@
 package com.segway.loomo.services;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.segway.loomo.MainActivity;
-import com.segway.loomo.R;
 import com.segway.loomo.objects.CarModel;
 import com.segway.loomo.objects.Category;
 import com.segway.loomo.objects.Customer;
@@ -18,8 +15,6 @@ import com.segway.robot.sdk.voice.grammar.GrammarConstraint;
 import com.segway.robot.sdk.voice.grammar.Slot;
 import com.segway.robot.sdk.voice.recognition.RecognitionListener;
 import com.segway.robot.sdk.voice.recognition.RecognitionResult;
-import com.segway.robot.sdk.voice.recognition.WakeupListener;
-import com.segway.robot.sdk.voice.recognition.WakeupResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,11 +45,6 @@ public class RecognitionService extends Service {
      * recognition listener
      */
     private RecognitionListener recognitionListener;
-
-    /**
-     * wake up listener
-     */
-    private WakeupListener wakeupListener;
 
     /**
      * grammar constraints for speech recognition
@@ -130,7 +120,6 @@ public class RecognitionService extends Service {
             public void onBind() {
                 Log.d(TAG, "recognizer service bound successfully");
                 RecognitionService.getInstance().initControlGrammar();
-                RecognitionService.getInstance().startWakeUp();
             }
 
             @Override
@@ -146,25 +135,6 @@ public class RecognitionService extends Service {
     @Override
     public void initListeners(){
         Log.i(TAG, "init listeners");
-
-        this.wakeupListener = new WakeupListener() {
-            @Override
-            public void onStandby() {
-                Log.i(TAG, "in Standby");
-            }
-
-            @Override
-            public void onWakeupResult(WakeupResult wakeupResult) {
-                Log.i(TAG, "got wakeup result: " + wakeupResult);
-                SpeakService.getInstance().speak("Hello, I am Loomo, the Car Master. Do you want to know something about our cars?");
-                RecognitionService.getInstance().startListening();
-            }
-
-            @Override
-            public void onWakeupError(String error) {
-                Log.i(TAG, "got wakeup error: " + error);
-            }
-        };
 
         this.recognitionListener = new RecognitionListener() {
             @Override
@@ -608,6 +578,7 @@ public class RecognitionService extends Service {
                 "E class", "G class", "GLA", "GLC","GLE","V class"));
 
 
+
         this.yesNoGrammar = new GrammarConstraint();
         this.yesNoGrammar.setName("yes no grammar");
         this.yesNoGrammar.addSlot(new Slot("yes", false, Arrays.asList("yes", "yes please", "yeah", "sure", "of course", "no", "no thanks", "nah", "nope")));
@@ -636,20 +607,6 @@ public class RecognitionService extends Service {
         this.additionalConsultationGrammar.addSlot(new Slot("wanting", false, Arrays.asList("I want to", "I would like to")));
         this.additionalConsultationGrammar.addSlot(new Slot("verb", false, Arrays.asList("receive", "do")));
         this.additionalConsultationGrammar.addSlot(new Slot("consultation", false, Arrays.asList("a sales offer", "a phone call", "a test drive")));
-    }
-
-    /**
-     *  start the wakeup
-     */
-    public void startWakeUp() {
-        Log.d(TAG, "start listening");
-        this.dialogueStatus = DialogueStatus.WAKE_UP;
-        try {
-            this.recognizer.startWakeupMode(wakeupListener);
-        }
-        catch (VoiceException e) {
-            Log.w(TAG, "Exception: ", e);
-        }
     }
 
     /**
@@ -791,6 +748,6 @@ public class RecognitionService extends Service {
      *  enum class which defines the dialogue status possibilities
      */
     private enum DialogueStatus {
-        BEGINNING, WAKE_UP, START_DIALOGUE, CUSTOMER_INTERESTED, CATEGORY_SELECTED, MODEL_SELECTED, NEXT_CAR, MORE_INFORMATION, CALL_SALESMAN, ADDITIONAL_CONSULTATION, CONTACT_INFORMATION
+        BEGINNING, START_DIALOGUE, CUSTOMER_INTERESTED, CATEGORY_SELECTED, MODEL_SELECTED, NEXT_CAR, MORE_INFORMATION, CALL_SALESMAN, ADDITIONAL_CONSULTATION, CONTACT_INFORMATION
     }
 }

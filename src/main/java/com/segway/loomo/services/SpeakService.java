@@ -70,7 +70,7 @@ public class SpeakService extends Service {
             public void onBind() {
                 Log.d(TAG, "speaker service bound successfully");
                 try {
-                    speaker.setVolume(30);
+                    speaker.setVolume(50);
                 }
                 catch (VoiceException e) {
                     e.printStackTrace();
