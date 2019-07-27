@@ -11,6 +11,23 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+/**
+ * @author Vinayak Bevinakatti
+ * https://stackoverflow.com/questions/2020088/sending-email-in-android-using-javamail-api-without-using-the-default-built-in-a#2033124
+ *
+ * The Email functionality only works for a Googlemail account that allows access from less secure apps (Google Account Setting).
+ *
+ * The following classes need to be imported into the Android Project:
+ *  additional.jar
+ *  mail.jar
+ *  activation.jar
+ * Source: javamail-android (https://code.google.com/archive/p/javamail-android/)
+ *
+ * Permission Requirements:
+ *  Internet
+ */
+
+
 public class GMailSender extends javax.mail.Authenticator {
     private String mailhost = "smtp.gmail.com";
     private String user;

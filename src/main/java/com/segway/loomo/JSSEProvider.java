@@ -20,6 +20,8 @@ package com.segway.loomo;
 /**
  * @author Alexander Y. Kleymenov
  * @version $Revision$
+ *
+ * https://stackoverflow.com/questions/2020088/sending-email-in-android-using-javamail-api-without-using-the-default-built-in-a#2033124
  */
 
 

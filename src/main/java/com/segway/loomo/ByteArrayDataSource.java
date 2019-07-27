@@ -7,6 +7,11 @@ import java.io.OutputStream;
 
 import javax.activation.*;
 
+/**
+ * @author Vinayak Bevinakatti
+ * https://stackoverflow.com/questions/2020088/sending-email-in-android-using-javamail-api-without-using-the-default-built-in-a#2033124
+ */
+
 public class ByteArrayDataSource implements DataSource {
     private byte[] data;
     private String type;
